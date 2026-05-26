@@ -3,6 +3,7 @@ import { runDatabaseSeed } from "@/server/seed/run-database-seed";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 function isAuthorized(request: Request) {
   const secret = process.env.SEED_ADMIN_KEY;
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
 
     const body = await request.json().catch(() => ({}));
     const clearExisting = body?.clearExisting !== false;
-    const targetCount = Number(body?.targetCount) > 0 ? Number(body.targetCount) : 1000;
+    const targetCount = Number(body?.targetCount) > 0 ? Number(body.targetCount) : 300;
     const includeReviews = body?.includeReviews === true;
 
     const result = await runDatabaseSeed({
@@ -45,4 +46,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
