@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id               String            @id @default(cuid())
+  name             String?
+  email            String            @unique
+  password         String
+  createdAt        DateTime          @default(now())
+
+  savedColleges    SavedCollege[]
+  reviews          Review[]
+}
+
+model College {
+  id               String            @id @default(cuid())
+  name             String
+  location         String
+  state            String
+  fees             Int
+  rating           Float
+  placements       String
+  overview         String
+  imageUrl         String?
+
+  createdAt        DateTime          @default(now())
+
+  courses          Course[]
+  reviews          Review[]
+  savedBy          SavedCollege[]
+}
+
+model Course {
+  id               String            @id @default(cuid())
+  name             String
+  duration         String
+  fees             Int
+
+  collegeId        String
+  college          College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id               String            @id @default(cuid())
+  rating           Float
+  comment          String
+
+  userId           String
+  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  collegeId        String
+  college          College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  createdAt        DateTime          @default(now())
+}
+
+model SavedCollege {
+  id               String            @id @default(cuid())
+
+  userId           String
+  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  collegeId        String
+  college          College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  createdAt        DateTime          @default(now())
+
+  @@unique([userId, collegeId])
+}
