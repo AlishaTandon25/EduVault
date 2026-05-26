@@ -27,7 +27,7 @@ export function useColleges(filters: UseCollegesFilters = {}) {
         }
       });
 
-      const res = await fetch(`/api/colleges?${params.toString()}`);
+      const res = await fetch(`/api/colleges?${params.toString()}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch colleges");
       return res.json();
     },
@@ -39,7 +39,7 @@ export function useCollegeDetail(slug: string) {
     queryKey: ["college", slug],
     queryFn: async () => {
       if (!slug) return null;
-      const res = await fetch(`/api/colleges/${slug}`);
+      const res = await fetch(`/api/colleges/${slug}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch college detail");
       return res.json();
     },
@@ -54,7 +54,7 @@ export function useSearchSuggestions(query: string) {
       if (!query || query.trim().length < 2) {
         return { suggestions: [], popular: [] };
       }
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`);
+      const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch search suggestions");
       return res.json();
     },

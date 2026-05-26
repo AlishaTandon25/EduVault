@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { CollegesRepository } from "@/server/db/colleges.repository";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -33,7 +36,11 @@ export async function GET(request: Request) {
 
     const result = await CollegesRepository.findAll(filters, { page, limit }, sort);
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (error: any) {
     console.error("Colleges GET error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

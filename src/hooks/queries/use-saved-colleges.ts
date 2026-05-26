@@ -5,7 +5,7 @@ export function useSavedColleges() {
   return useQuery({
     queryKey: ["saved-colleges"],
     queryFn: async () => {
-      const res = await fetch("/api/user/saved-colleges");
+      const res = await fetch("/api/user/saved-colleges", { cache: "no-store" });
       if (res.status === 401) return []; // Return empty array if not authenticated
       if (!res.ok) throw new Error("Failed to fetch saved colleges");
       return res.json();

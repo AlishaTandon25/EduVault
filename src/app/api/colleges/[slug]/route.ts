@@ -4,6 +4,9 @@ import { UsersRepository } from "@/server/db/users.repository";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface RouteParams {
   params: Promise<{ slug: string }>;
 }
@@ -37,10 +40,17 @@ export async function GET(request: Request, { params }: RouteParams) {
       );
     }
 
-    return NextResponse.json({
-      ...college,
-      isSaved,
-    });
+    return NextResponse.json(
+      {
+        ...college,
+        isSaved,
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        },
+      }
+    );
   } catch (error: any) {
     console.error("College detail GET error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
