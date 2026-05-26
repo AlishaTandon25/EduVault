@@ -71,7 +71,7 @@ export default function LandingPage() {
               Navigate the complex world of higher education with confidence. Compare fees, placement records, and campus life to make data-driven decisions.
             </p>
             {/* Giant Search Bar */}
-            <form onSubmit={handleSearchSubmit} className="w-full max-w-3xl bg-white rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.1)] border border-outline-variant p-2 flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-[0px_15px_40px_rgba(0,0,0,0.15)] focus-within:border-secondary">
+            <form onSubmit={handleSearchSubmit} className="w-full max-w-3xl bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.1)] border border-outline-variant p-2 flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-[0px_15px_40px_rgba(0,0,0,0.15)] focus-within:border-secondary">
               <div className="flex-grow flex items-center px-4 py-2 border-b md:border-b-0 md:border-r border-outline-variant">
                 <span className="material-symbols-outlined text-on-surface-variant mr-3">search</span>
                 <input
@@ -109,7 +109,7 @@ export default function LandingPage() {
             {/* Horizontal Scroll Container for Mobile, Grid for Desktop */}
             <div className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-4 -mx-gutter px-gutter md:mx-0 md:px-0 md:grid md:grid-cols-2 gap-md">
               {/* College Card 1 */}
-              <div onClick={() => router.push("/colleges/iit-delhi")} className="min-w-[85vw] md:min-w-0 flex-shrink-0 snap-center bg-white rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow group cursor-pointer">
+              <div onClick={() => router.push("/colleges/iit-delhi")} className="min-w-[85vw] md:min-w-0 flex-shrink-0 snap-center bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow group cursor-pointer">
                 <div className="h-48 relative overflow-hidden bg-surface-container-high">
                   <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAN2JNF7bVw2nBekfVI3ibiKjOGV7_I114JHt9PxDBvrfrYoTCiUnIPNoa7mlSm84EkQgVp-WyUMZ7vkrOrzPlZ6ZK0I1sctziaiG1Y8GNyKFaQQCdAwRS3Lfw0oiswMi0x8YJSmAjgcDrAk6Ie8TXGYpYvo8-a5-4-QKGURBR5z_uCHE7ZbffvIaelkQKUbiJrX97kXHU4zHrSw8Bzhgxo4i5AA-jvPjA8o9JxWKuHhluycWC1aShGmjjL0Qyohnd06So1aGNNd2c')" }}>
                   </div>
@@ -148,7 +148,7 @@ export default function LandingPage() {
                 </div>
               </div>
               {/* College Card 2 */}
-              <div onClick={() => router.push("/colleges/bits-pilani")} className="min-w-[85vw] md:min-w-0 flex-shrink-0 snap-center bg-white rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow group cursor-pointer">
+              <div onClick={() => router.push("/colleges/bits-pilani")} className="min-w-[85vw] md:min-w-0 flex-shrink-0 snap-center bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow group cursor-pointer">
                 <div className="h-48 relative overflow-hidden bg-surface-container-high">
                   <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBSguY97b6IYypoYD9dgTpt9G3aSIqhFLrjPEbk-MtKwbRWfJQliBBMy-s0twuvE_0ok5WtErcXOdwHNNH77S16Cv-Lfq8Q3JHm8HnvfAIwq5-30Yb8k2ruGhHJKBntz7aw_0uh_Y7mtQ9FKQiFfwE4xeLNSeFZUbkTPdpTrqiUDTQi05Thp-NsQUOuhpCxq-c2cGh_3rKvIdWQ3yXt0uKKwWKFxfDI7qZgc3WyJoW-H9QtAZ1bujWHKmF0j64otmdOn3HDQ-_PgO4')" }}>
                   </div>
@@ -194,14 +194,14 @@ export default function LandingPage() {
         <section className="w-full py-xl px-gutter bg-primary text-on-primary">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-headline-lg font-headline-lg mb-sm">Ready to make a decision?</h2>
-            <p className="text-body-lg font-body-lg text-primary-fixed-dim mb-lg max-w-2xl mx-auto">
+            <p className="text-body-lg font-body-lg text-on-primary/80 mb-lg max-w-2xl mx-auto">
               Join 1M+ students who have successfully navigated their college discovery journey with EduVault.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 animate-in fade-in-50 duration-300">
-              <Link href="/compare" className="bg-secondary text-on-secondary px-8 py-4 rounded-lg text-label-md font-label-md font-bold hover:bg-secondary-container transition-colors shadow-lg text-center cursor-pointer">
+              <Link href="/compare" className="bg-secondary text-on-secondary px-8 py-4 rounded-lg text-label-md font-label-md font-bold hover:opacity-90 transition-opacity shadow-lg text-center cursor-pointer">
                 Start Your Comparison
               </Link>
-              <button onClick={() => router.push("/login?tab=login")} className="bg-transparent border-2 border-primary-fixed-dim text-on-primary px-8 py-4 rounded-lg text-label-md font-label-md font-bold hover:bg-primary-container transition-colors text-center cursor-pointer">
+              <button onClick={() => router.push("/login?tab=login")} className="bg-transparent border-2 border-white/20 text-white px-8 py-4 rounded-lg text-label-md font-label-md font-bold hover:bg-white/10 hover:border-white/50 transition-colors text-center cursor-pointer">
                 Create Free Account
               </button>
             </div>
@@ -239,7 +239,7 @@ export default function LandingPage() {
             <p className="text-body-sm font-body-sm text-on-surface-variant mb-3">Get the latest college rankings and admission insights.</p>
             <form onSubmit={handleSearchSubmit} className="flex gap-2">
               <input className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-body-sm font-body-sm focus:ring-1 focus:ring-secondary focus:border-secondary outline-none text-on-surface" placeholder="Email address" type="email" required />
-              <button type="submit" className="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-sm font-label-sm hover:bg-primary-container transition-colors cursor-pointer">Subscribe</button>
+              <button type="submit" className="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-sm font-label-sm hover:opacity-90 transition-opacity cursor-pointer">Subscribe</button>
             </form>
           </div>
         </div>

@@ -146,7 +146,7 @@ function LoginContent() {
                   </div>
                 </div>
                 <button 
-                  className="w-full bg-primary hover:bg-primary-container text-on-primary text-label-md font-label-md py-sm rounded-md transition-colors mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold" 
+                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md py-sm rounded-md transition-all mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold" 
                   type="submit"
                 >
                   Sign In
@@ -218,7 +218,7 @@ function LoginContent() {
                   </div>
                 </div>
                 <button 
-                  className="w-full bg-primary hover:bg-primary-container text-on-primary text-label-md font-label-md py-sm rounded-md transition-colors mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold" 
+                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md py-sm rounded-md transition-all mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold" 
                   type="submit"
                 >
                   Create Account

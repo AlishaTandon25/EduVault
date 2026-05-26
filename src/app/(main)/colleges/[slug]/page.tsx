@@ -79,10 +79,10 @@ export default function CollegeDetailsPage({ params }: PageProps) {
                 "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBSguY97b6IYypoYD9dgTpt9G3aSIqhFLrjPEbk-MtKwbRWfJQliBBMy-s0twuvE_0ok5WtErcXOdwHNNH77S16Cv-Lfq8Q3JHm8HnvfAIwq5-30Yb8k2ruGhHJKBntz7aw_0uh_Y7mtQ9FKQiFfwE4xeLNSeFZUbkTPdpTrqiUDTQi05Thp-NsQUOuhpCxq-c2cGh_3rKvIdWQ3yXt0uKKwWKFxfDI7qZgc3WyJoW-H9QtAZ1bujWHKmF0j64otmdOn3HDQ-_PgO4')",
             }}
           ></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/60 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#091426]/95 via-[#091426]/60 to-transparent"></div>
           <div className="relative w-full px-6 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6 z-10">
             <div className="flex items-end gap-6 flex-wrap md:flex-nowrap">
-              <div className="w-28 h-28 bg-surface-container-lowest rounded-xl p-2 shadow-lg border border-outline-variant flex-shrink-0 flex items-center justify-center bg-white">
+              <div className="w-28 h-28 bg-white rounded-xl p-2 shadow-lg border border-outline-variant flex-shrink-0 flex items-center justify-center">
                 <img
                   alt="BITS Pilani Logo"
                   className="w-full h-full object-contain rounded-lg"
@@ -118,7 +118,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
 
         {/* Stats Bar */}
         <div className="px-6 max-w-7xl mx-auto -mt-20 relative z-20 mb-12">
-          <div className="bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.05)] border border-outline-variant p-2 bg-white">
+          <div className="bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.05)] border border-outline-variant p-2">
             <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-outline-variant">
               <div className="p-6 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors rounded-l-lg">
                 <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-2">NAAC Rating</div>
@@ -151,7 +151,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
           {/* Content Canvas */}
           <div className="md:col-span-8 space-y-12">
             {/* Secondary Sticky Nav */}
-            <div className="bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant sticky top-16 z-40 py-3 flex gap-6 overflow-x-auto no-scrollbar bg-white">
+            <div className="bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant sticky top-16 z-40 py-3 flex gap-6 overflow-x-auto no-scrollbar">
               <a href="#overview" className="text-secondary border-b-2 border-secondary pb-2 text-sm font-semibold whitespace-nowrap">
                 Overview
               </a>
@@ -163,7 +163,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
             {/* Overview Section */}
             <section className="scroll-mt-32" id="overview">
               <h2 className="text-2xl font-bold text-primary mb-6">Institution Overview</h2>
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm bg-white">
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
                 <p className="text-base md:text-lg text-on-surface-variant mb-6 leading-relaxed">
                   Birla Institute of Technology and Science (BITS) Pilani is one of India's premier engineering and science institutes. Renowned for its rigorous academic curriculum and vibrant campus life, it operates as a deemed university and is consistently ranked among the top technical institutes in the country.
                 </p>
@@ -199,18 +199,18 @@ export default function CollegeDetailsPage({ params }: PageProps) {
               <h2 className="text-2xl font-bold text-primary mb-6">Placement Highlights</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {/* Bento Item 1 */}
-                <div className="md:col-span-2 bg-gradient-to-br from-primary to-inverse-surface rounded-xl p-6 md:p-8 text-on-primary shadow-sm relative overflow-hidden group">
+                <div className="md:col-span-2 bg-gradient-to-br from-[#091426] to-[#1e293b] rounded-xl p-6 md:p-8 text-white shadow-sm relative overflow-hidden group">
                   <div className="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
                     <span className="material-symbols-outlined text-[150px]">trending_up</span>
                   </div>
                   <div className="relative z-10">
-                    <div className="text-xs font-semibold text-primary-fixed-dim uppercase tracking-wider mb-2">Highest Domestic Package</div>
-                    <div className="text-4xl font-extrabold mb-2">₹60.75 LPA</div>
-                    <p className="text-sm text-surface-dim">Secured during the recent placement drive for top engineering roles.</p>
+                    <div className="text-xs font-semibold text-sky-300 uppercase tracking-wider mb-2">Highest Domestic Package</div>
+                    <div className="text-4xl font-extrabold mb-2 text-white">₹60.75 LPA</div>
+                    <p className="text-sm text-slate-300">Secured during the recent placement drive for top engineering roles.</p>
                   </div>
                 </div>
                 {/* Bento Item 2 */}
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-center bg-white">
+                <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-center">
                   <div className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Average Package</div>
                   <div className="text-2xl font-bold text-secondary mb-1">₹21.8 LPA</div>
                   <div className="flex items-center gap-1 text-tertiary-fixed-dim text-xs font-semibold">
@@ -221,7 +221,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
               </div>
 
               {/* Top Recruiters */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm bg-white">
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
                 <h3 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
                   <span className="material-symbols-outlined text-secondary">work</span>
                   Top Recruiters
@@ -245,20 +245,20 @@ export default function CollegeDetailsPage({ params }: PageProps) {
 
           {/* Sidebar / Contextual Actions */}
           <div className="md:col-span-4 space-y-6">
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] sticky top-32 bg-white">
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] sticky top-32">
               <h3 className="text-lg font-bold text-primary mb-2">Interested in BITS?</h3>
               <p className="text-xs text-on-surface-variant mb-6">
                 Applications for the BITSAT entrance exam are currently open. Check eligibility before applying.
               </p>
               <button
                 onClick={handleApplyNow}
-                className="w-full bg-primary hover:bg-primary-container text-on-primary py-3 rounded-lg text-sm font-bold transition-all mb-3 cursor-pointer"
+                className="w-full bg-primary hover:opacity-90 text-on-primary py-3 rounded-lg text-sm font-bold transition-all mb-3 cursor-pointer"
               >
                 Apply via BITSAT
               </button>
               <button
                 onClick={handleDownloadBrochure}
-                className="w-full bg-surface border border-outline-variant text-primary py-3 rounded-lg text-sm font-semibold hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 cursor-pointer bg-white"
+                className="w-full bg-surface border border-outline-variant text-primary py-3 rounded-lg text-sm font-semibold hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[18px]">download</span>
                 Download Brochure
@@ -349,9 +349,9 @@ export default function CollegeDetailsPage({ params }: PageProps) {
           <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
         </div>
         <div className="max-w-7xl mx-auto px-6 relative -mt-16 md:-mt-24 z-10">
-          <div className="bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.1)] border border-outline-variant p-6 md:p-8 flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white">
+          <div className="bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.1)] border border-outline-variant p-6 md:p-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex flex-col md:flex-row gap-6 items-start md:items-end">
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg bg-surface flex-shrink-0 border border-outline-variant shadow-sm flex items-center justify-center p-2 bg-white">
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg bg-surface flex-shrink-0 border border-outline-variant shadow-sm flex items-center justify-center p-2">
                 <span className="text-xl md:text-2xl font-extrabold text-primary">IITD</span>
               </div>
               <div className="flex flex-col gap-1 pb-1">
@@ -385,7 +385,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
       {/* Stats Bar */}
       <section className="max-w-7xl mx-auto w-full px-6 mt-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group bg-white">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
             <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
             <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">NAAC Rating</span>
             <div className="flex items-baseline gap-2">
@@ -393,7 +393,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
               <span className="material-symbols-outlined text-[18px] text-emerald-500">military_tech</span>
             </div>
           </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group bg-white">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
             <div className="absolute -right-4 -top-4 w-16 h-16 bg-secondary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
             <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">Highest Package</span>
             <div className="flex items-baseline gap-2">
@@ -401,7 +401,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
               <span className="text-on-surface-variant text-xs">/ yr</span>
             </div>
           </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group bg-white">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
             <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
             <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">B.Tech Fees</span>
             <div className="flex items-baseline gap-2">
@@ -409,7 +409,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
               <span className="text-on-surface-variant text-xs">Total</span>
             </div>
           </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group bg-white">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
             <div className="absolute -right-4 -top-4 w-16 h-16 bg-secondary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
             <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">NIRF Rank</span>
             <div className="flex items-baseline gap-2">
@@ -423,7 +423,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto w-full px-6 mt-12 flex flex-col md:flex-row gap-8 items-start pb-16">
         <div className="hidden md:flex flex-col w-64 flex-shrink-0 sticky top-[80px]">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] p-4 flex flex-col gap-2 bg-white">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] p-4 flex flex-col gap-2">
             <a href="#overview" className="bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 text-sm font-semibold flex items-center gap-3 transition-colors">
               <span className="material-symbols-outlined">info</span>
               Overview
@@ -439,7 +439,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
           {/* Overview Section */}
           <section className="scroll-mt-32" id="overview">
             <h2 className="text-xl font-bold text-primary border-b border-outline-variant pb-2 mb-6">About the Institution</h2>
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] bg-white">
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)]">
               <p className="text-base md:text-lg text-on-surface-variant leading-relaxed mb-6">
                 Indian Institute of Technology Delhi is one of the Twenty Three IITs created to be Centres of Excellence for training, research and development in science, engineering and technology in India. Established as College of Engineering in 1961, the Institute was later declared an Institution of National Importance under the "Institutes of Technology (Amendment) Act, 1963" and was renamed as "Indian Institute of Technology Delhi".
               </p>
@@ -453,20 +453,20 @@ export default function CollegeDetailsPage({ params }: PageProps) {
           <section className="scroll-mt-32" id="placements">
             <h2 className="text-xl font-bold text-primary border-b border-outline-variant pb-2 mb-6">Placement Highlights</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 bg-gradient-to-br from-primary to-inverse-surface border border-outline-variant rounded-xl p-6 md:p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] relative overflow-hidden text-on-primary">
+              <div className="md:col-span-2 bg-gradient-to-br from-[#091426] to-[#1e293b] border border-outline-variant/30 rounded-xl p-6 md:p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] relative overflow-hidden text-white">
                 <div className="relative z-10 flex flex-col h-full justify-between min-h-[160px]">
                   <div>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-primary-fixed-dim">Highest Package Offered</span>
-                    <h3 className="text-4xl font-extrabold mt-2">₹ 2.05 Cr</h3>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-sky-300">Highest Package Offered</span>
+                    <h3 className="text-4xl font-extrabold mt-2 text-white">₹ 2.05 Cr</h3>
                   </div>
                   <div className="mt-6 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-tertiary-fixed-dim">trending_up</span>
-                    <span className="text-sm text-primary-fixed">International &amp; Domestic offers included</span>
+                    <span className="material-symbols-outlined text-emerald-400">trending_up</span>
+                    <span className="text-sm text-slate-300">International &amp; Domestic offers included</span>
                   </div>
                 </div>
                 <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
               </div>
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between bg-white">
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between">
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Average Package</span>
                   <h3 className="text-xl font-bold text-secondary mt-2">₹ 18.5 LPA</h3>
@@ -487,7 +487,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
               <h3 className="text-base font-bold text-primary mb-3">Top Recruiters</h3>
               <div className="flex flex-wrap gap-2.5">
                 {["Microsoft", "Google", "Goldman Sachs", "Bain & Company", "BCG", "Jane Street", "McKinsey"].map((recruiter) => (
-                  <div key={recruiter} className="bg-surface border border-outline-variant px-4 py-2 rounded-full flex items-center gap-2 shadow-sm bg-white">
+                  <div key={recruiter} className="bg-surface border border-outline-variant px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
                     <span className="text-sm font-semibold text-on-surface">{recruiter}</span>
                   </div>
                 ))}

@@ -57,7 +57,7 @@ export default function DiscoverPage() {
       {/* Main Content Layout */}
       <main className="flex-1 flex w-full max-w-container-max mx-auto px-gutter py-md gap-lg">
         {/* SideNavBar (Filters) */}
-        <aside className="hidden md:flex flex-col p-4 gap-4 bg-white text-secondary h-[calc(100vh-6rem)] w-64 rounded-r-xl border-r border-outline-variant shadow-sm sticky top-24 overflow-y-auto">
+        <aside className="hidden md:flex flex-col p-4 gap-4 bg-surface-container-lowest text-secondary h-[calc(100vh-6rem)] w-64 rounded-r-xl border-r border-outline-variant shadow-sm sticky top-24 overflow-y-auto">
           <div className="mb-sm">
             <h2 className="text-headline-sm font-headline-sm font-extrabold text-primary">Filters</h2>
             <p className="text-label-sm font-label-sm text-on-surface-variant mt-1">Refine your search</p>
