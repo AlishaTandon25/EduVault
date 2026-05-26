@@ -1,0 +1,64 @@
+// NIT college data
+export const nitColleges = [
+  { slug: "nit-trichy", name: "National Institute of Technology Tiruchirappalli", shortDescription: "India's top-ranked NIT", overview: "NIT Trichy is consistently the highest-ranked NIT in India. Known for academic excellence, strong placement record, and vibrant campus life.", location: "Tiruchirappalli, Tamil Nadu", city: "Tiruchirappalli", state: "Tamil Nadu", stream: "ENGINEERING", fees: 150000, rating: 4.6, placementPercentage: 95, averagePackage: 14.5, highestPackage: 55, nirfRank: 9, naacGrade: "A++", establishedYear: 1964, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "800 acres", totalStudents: 7500, totalFaculty: 420, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 600000, eligibility: "JEE Main", seats: 90 },
+    { name: "B.Tech Electronics", duration: "4 years", fees: 600000, eligibility: "JEE Main", seats: 75 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 1, maxRank: 5000 }] },
+
+  { slug: "nit-surathkal", name: "National Institute of Technology Karnataka (Surathkal)", shortDescription: "Top NIT in southern India with coastal campus", overview: "NITK Surathkal is one of India's premier engineering institutions, known for its beautiful beachside campus and excellent placement record.", location: "Mangalore, Karnataka", city: "Mangalore", state: "Karnataka", stream: "ENGINEERING", fees: 145000, rating: 4.5, placementPercentage: 93, averagePackage: 13.8, highestPackage: 50, nirfRank: 12, naacGrade: "A+", establishedYear: 1960, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "295 acres", totalStudents: 6500, totalFaculty: 380, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 580000, eligibility: "JEE Main", seats: 85 },
+    { name: "B.Tech IT", duration: "4 years", fees: 580000, eligibility: "JEE Main", seats: 70 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 1, maxRank: 6000 }] },
+
+  { slug: "nit-warangal", name: "National Institute of Technology Warangal", shortDescription: "One of the first RECs, now a top NIT", overview: "NIT Warangal is one of the original Regional Engineering Colleges established in 1959. It maintains a strong reputation in engineering education.", location: "Warangal, Telangana", city: "Warangal", state: "Telangana", stream: "ENGINEERING", fees: 140000, rating: 4.5, placementPercentage: 92, averagePackage: 13.5, highestPackage: 48, nirfRank: 14, naacGrade: "A+", establishedYear: 1959, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "248 acres", totalStudents: 5800, totalFaculty: 350, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 560000, eligibility: "JEE Main", seats: 80 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 1, maxRank: 7000 }] },
+
+  { slug: "nit-rourkela", name: "National Institute of Technology Rourkela", shortDescription: "Leading NIT in eastern India", overview: "NIT Rourkela is known for its strong metallurgy, mining, and computer science programs. The campus spans over 600 acres with excellent infrastructure.", location: "Rourkela, Odisha", city: "Rourkela", state: "Odisha", stream: "ENGINEERING", fees: 135000, rating: 4.4, placementPercentage: 90, averagePackage: 12.5, highestPackage: 42, nirfRank: 17, naacGrade: "A+", establishedYear: 1961, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "600 acres", totalStudents: 5500, totalFaculty: 340, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 540000, eligibility: "JEE Main", seats: 75 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 2000, maxRank: 10000 }] },
+
+  { slug: "nit-calicut", name: "National Institute of Technology Calicut", shortDescription: "Top NIT in Kerala with lush green campus", overview: "NIT Calicut offers excellent engineering education in a serene campus setting in Kerala. Known for strong CS and EC departments.", location: "Kozhikode, Kerala", city: "Kozhikode", state: "Kerala", stream: "ENGINEERING", fees: 130000, rating: 4.4, placementPercentage: 91, averagePackage: 12.0, highestPackage: 40, nirfRank: 19, naacGrade: "A+", establishedYear: 1961, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "110 acres", totalStudents: 4800, totalFaculty: 300, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 520000, eligibility: "JEE Main", seats: 70 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 3000, maxRank: 12000 }] },
+
+  { slug: "nit-allahabad", name: "Motilal Nehru National Institute of Technology Allahabad", shortDescription: "One of the oldest NITs in northern India", overview: "MNNIT Allahabad has a rich heritage dating back to 1961. It offers quality engineering education and has a strong alumni network in the tech industry.", location: "Prayagraj, Uttar Pradesh", city: "Prayagraj", state: "Uttar Pradesh", stream: "ENGINEERING", fees: 138000, rating: 4.3, placementPercentage: 88, averagePackage: 11.5, highestPackage: 38, nirfRank: 22, naacGrade: "A", establishedYear: 1961, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "222 acres", totalStudents: 5200, totalFaculty: 310, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 552000, eligibility: "JEE Main", seats: 70 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 4000, maxRank: 15000 }] },
+
+  { slug: "nit-jaipur", name: "Malaviya National Institute of Technology Jaipur", shortDescription: "Leading NIT in Rajasthan's pink city", overview: "MNIT Jaipur is a premier institute in Rajasthan known for its strong architecture, civil, and computer science programs.", location: "Jaipur, Rajasthan", city: "Jaipur", state: "Rajasthan", stream: "ENGINEERING", fees: 140000, rating: 4.3, placementPercentage: 87, averagePackage: 11.0, highestPackage: 35, nirfRank: 24, naacGrade: "A", establishedYear: 1963, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "317 acres", totalStudents: 5000, totalFaculty: 290, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 560000, eligibility: "JEE Main", seats: 65 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 5000, maxRank: 18000 }] },
+
+  { slug: "nit-kurukshetra", name: "National Institute of Technology Kurukshetra", shortDescription: "Well-established NIT in Haryana", overview: "NIT Kurukshetra is one of the well-established NITs in North India with a strong focus on electronics, computer science, and IT.", location: "Kurukshetra, Haryana", city: "Kurukshetra", state: "Haryana", stream: "ENGINEERING", fees: 135000, rating: 4.2, placementPercentage: 86, averagePackage: 10.5, highestPackage: 33, nirfRank: 28, naacGrade: "A", establishedYear: 1963, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "250 acres", totalStudents: 4500, totalFaculty: 270, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 540000, eligibility: "JEE Main", seats: 60 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 6000, maxRank: 20000 }] },
+
+  { slug: "nit-nagpur", name: "Visvesvaraya National Institute of Technology Nagpur", shortDescription: "Top NIT in central India", overview: "VNIT Nagpur is one of the top-performing NITs known for strong mining, metallurgy, and computer science programs.", location: "Nagpur, Maharashtra", city: "Nagpur", state: "Maharashtra", stream: "ENGINEERING", fees: 142000, rating: 4.3, placementPercentage: 88, averagePackage: 11.2, highestPackage: 36, nirfRank: 25, naacGrade: "A", establishedYear: 1960, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "215 acres", totalStudents: 4800, totalFaculty: 285, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 568000, eligibility: "JEE Main", seats: 65 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 5000, maxRank: 16000 }] },
+
+  { slug: "nit-durgapur", name: "National Institute of Technology Durgapur", shortDescription: "Premier NIT in West Bengal's industrial belt", overview: "NIT Durgapur is located in the heart of West Bengal's industrial belt and has strong ties with the manufacturing and IT sectors.", location: "Durgapur, West Bengal", city: "Durgapur", state: "West Bengal", stream: "ENGINEERING", fees: 130000, rating: 4.2, placementPercentage: 85, averagePackage: 10.0, highestPackage: 30, nirfRank: 30, naacGrade: "A", establishedYear: 1960, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "180 acres", totalStudents: 4200, totalFaculty: 250, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 520000, eligibility: "JEE Main", seats: 60 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 8000, maxRank: 25000 }] },
+
+  { slug: "nit-silchar", name: "National Institute of Technology Silchar", shortDescription: "NIT in northeast India's Barak Valley", overview: "NIT Silchar serves the northeast region with quality engineering education and has been improving its placement record significantly.", location: "Silchar, Assam", city: "Silchar", state: "Assam", stream: "ENGINEERING", fees: 125000, rating: 4.1, placementPercentage: 82, averagePackage: 9.0, highestPackage: 28, nirfRank: 38, naacGrade: "A", establishedYear: 1967, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "625 acres", totalStudents: 3800, totalFaculty: 230, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 500000, eligibility: "JEE Main", seats: 55 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 10000, maxRank: 30000 }] },
+
+  { slug: "nit-bhopal", name: "Maulana Azad National Institute of Technology Bhopal", shortDescription: "MANIT — prominent NIT in Madhya Pradesh", overview: "MANIT Bhopal has a strong tradition of engineering education since 1960 and is particularly strong in civil, electrical and computer science.", location: "Bhopal, Madhya Pradesh", city: "Bhopal", state: "Madhya Pradesh", stream: "ENGINEERING", fees: 133000, rating: 4.2, placementPercentage: 85, averagePackage: 10.2, highestPackage: 32, nirfRank: 32, naacGrade: "A", establishedYear: 1960, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "650 acres", totalStudents: 4500, totalFaculty: 260, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 532000, eligibility: "JEE Main", seats: 60 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 7000, maxRank: 22000 }] },
+
+  { slug: "nit-jamshedpur", name: "National Institute of Technology Jamshedpur", shortDescription: "NIT in the steel city of India", overview: "NIT Jamshedpur benefits from its proximity to Tata Steel and other major industries, offering strong industry connections for students.", location: "Jamshedpur, Jharkhand", city: "Jamshedpur", state: "Jharkhand", stream: "ENGINEERING", fees: 128000, rating: 4.1, placementPercentage: 84, averagePackage: 9.5, highestPackage: 28, nirfRank: 35, naacGrade: "A", establishedYear: 1960, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "180 acres", totalStudents: 3500, totalFaculty: 220, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 512000, eligibility: "JEE Main", seats: 55 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 9000, maxRank: 28000 }] },
+
+  { slug: "nit-patna", name: "National Institute of Technology Patna", shortDescription: "Growing NIT with modern campus in Bihar", overview: "NIT Patna has undergone major upgrades with a new campus and modern facilities. Growing rapidly in computer science and electronics.", location: "Patna, Bihar", city: "Patna", state: "Bihar", stream: "ENGINEERING", fees: 125000, rating: 4.0, placementPercentage: 82, averagePackage: 9.0, highestPackage: 25, nirfRank: 40, naacGrade: "A", establishedYear: 1886, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "125 acres", totalStudents: 3200, totalFaculty: 200, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 500000, eligibility: "JEE Main", seats: 55 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 12000, maxRank: 35000 }] },
+
+  { slug: "nit-surat", name: "Sardar Vallabhbhai National Institute of Technology Surat", shortDescription: "Dynamic NIT in Gujarat's diamond city", overview: "SVNIT Surat is known for its strong civil, mechanical and computer science programs. Benefits from Surat's thriving economy.", location: "Surat, Gujarat", city: "Surat", state: "Gujarat", stream: "ENGINEERING", fees: 140000, rating: 4.2, placementPercentage: 86, averagePackage: 10.5, highestPackage: 32, nirfRank: 29, naacGrade: "A", establishedYear: 1961, ownership: "GOVERNMENT", approvedBy: "UGC, AICTE", campusArea: "200 acres", totalStudents: 4000, totalFaculty: 250, courses: [
+    { name: "B.Tech Computer Science", duration: "4 years", fees: 560000, eligibility: "JEE Main", seats: 60 },
+  ], predictor: [{ exam: "JEE_MAIN", minRank: 6000, maxRank: 20000 }] },
+];

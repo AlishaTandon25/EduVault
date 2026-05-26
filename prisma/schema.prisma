@@ -3,73 +3,240 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+// ─── Enums ────────────────────────────────────────────
+
+enum Ownership {
+  GOVERNMENT
+  PRIVATE
+  DEEMED
+  AUTONOMOUS
+  PUBLIC_PRIVATE
+}
+
+enum Stream {
+  ENGINEERING
+  MEDICAL
+  MBA
+  LAW
+  DESIGN
+  SCIENCE
+  ARTS
+  COMMERCE
+  PHARMACY
+  AGRICULTURE
+}
+
+enum ActivityType {
+  VIEW_COLLEGE
+  SAVE_COLLEGE
+  COMPARE
+  SEARCH
+  REVIEW
+  QUESTION
+  PREDICTOR
+}
+
+// ─── User ─────────────────────────────────────────────
 
 model User {
   id               String            @id @default(cuid())
   name             String?
   email            String            @unique
   password         String
+  image            String?
   createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   savedColleges    SavedCollege[]
+  savedComparisons SavedComparison[]
   reviews          Review[]
+  questions        Question[]
+  answers          Answer[]
+  recentActivity   RecentActivity[]
 }
+
+// ─── College ──────────────────────────────────────────
 
 model College {
-  id               String            @id @default(cuid())
-  name             String
-  location         String
-  state            String
-  fees             Int
-  rating           Float
-  placements       String
-  overview         String
-  imageUrl         String?
+  id                  String      @id @default(cuid())
+  slug                String      @unique
+  name                String
+  shortDescription    String
+  overview            String
+  location            String
+  city                String
+  state               String
+  stream              Stream
+  fees                Int         // average annual fees in INR
+  rating              Float       @default(0)
+  placementPercentage Float?
+  averagePackage      Float?      // in LPA
+  highestPackage      Float?      // in LPA
+  nirfRank            Int?
+  naacGrade           String?     // A++, A+, A, B++, B+, B
+  establishedYear     Int
+  ownership           Ownership
+  approvedBy          String      @default("UGC")
+  campusArea          String?     // e.g. "320 acres"
+  imageUrl            String?
+  logoUrl             String?
+  galleryImages       String[]    @default([])
+  website             String?
+  latitude            Float?
+  longitude           Float?
+  totalStudents       Int?
+  totalFaculty        Int?
 
-  createdAt        DateTime          @default(now())
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 
-  courses          Course[]
-  reviews          Review[]
-  savedBy          SavedCollege[]
+  courses             Course[]
+  reviews             Review[]
+  savedBy             SavedCollege[]
+  questions           Question[]
+  predictors          Predictor[]
+
+  @@index([slug])
+  @@index([state])
+  @@index([city])
+  @@index([stream])
+  @@index([ownership])
+  @@index([fees])
+  @@index([rating])
+  @@index([nirfRank])
+  @@index([naacGrade])
 }
+
+// ─── Course ───────────────────────────────────────────
 
 model Course {
-  id               String            @id @default(cuid())
-  name             String
-  duration         String
-  fees             Int
+  id            String  @id @default(cuid())
+  name          String
+  duration      String
+  fees          Int     // total fees for full duration
+  eligibility   String?
+  seats         Int?
 
-  collegeId        String
-  college          College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  collegeId     String
+  college       College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@index([collegeId])
 }
+
+// ─── Review ───────────────────────────────────────────
 
 model Review {
-  id               String            @id @default(cuid())
-  rating           Float
-  comment          String
+  id        String   @id @default(cuid())
+  rating    Float
+  title     String
+  comment   String
+  createdAt DateTime @default(now())
 
-  userId           String
-  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  collegeId        String
-  college          College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  collegeId String
+  college   College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
 
-  createdAt        DateTime          @default(now())
+  @@index([collegeId])
+  @@index([userId])
 }
 
+// ─── Question ─────────────────────────────────────────
+
+model Question {
+  id        String   @id @default(cuid())
+  question  String
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  collegeId String
+  college   College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  answers   Answer[]
+
+  @@index([collegeId])
+}
+
+// ─── Answer ───────────────────────────────────────────
+
+model Answer {
+  id        String   @id @default(cuid())
+  answer    String
+  upvotes   Int      @default(0)
+  createdAt DateTime @default(now())
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+}
+
+// ─── Predictor ────────────────────────────────────────
+
+model Predictor {
+  id        String  @id @default(cuid())
+  exam      String  // JEE_MAIN, JEE_ADV, NEET, CAT, GATE, CLAT, NIFT
+  minRank   Int
+  maxRank   Int
+
+  collegeId String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@index([exam])
+  @@index([collegeId])
+}
+
+// ─── SavedCollege ─────────────────────────────────────
+
 model SavedCollege {
-  id               String            @id @default(cuid())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
-  userId           String
-  user             User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  collegeId        String
-  college          College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
-
-  createdAt        DateTime          @default(now())
+  collegeId String
+  college   College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, collegeId])
+}
+
+// ─── SavedComparison ──────────────────────────────────
+
+model SavedComparison {
+  id           String   @id @default(cuid())
+  name         String
+  collegeSlugs String[] // Array of college slugs
+  createdAt    DateTime @default(now())
+
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── RecentActivity ───────────────────────────────────
+
+model RecentActivity {
+  id         String       @id @default(cuid())
+  type       ActivityType
+  targetId   String       // college slug or search query
+  targetName String       // display name
+  createdAt  DateTime     @default(now())
+
+  userId     String
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
 }

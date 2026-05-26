@@ -4,14 +4,26 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useSession, signOut } from "next-auth/react";
+import { toast } from "sonner";
 
 export default function LandingPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/login?tab=login");
+    if (searchQuery.trim()) {
+      router.push(`/colleges?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push("/colleges");
+    }
+  };
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success("Thank you for subscribing to our newsletter!");
   };
 
   return (
@@ -20,30 +32,52 @@ export default function LandingPage() {
       <nav className="bg-surface/95 dark:bg-surface-dim/95 docked full-width top-0 sticky border-b border-outline-variant dark:border-outline backdrop-blur-md shadow-sm dark:shadow-none z-50 w-full">
         <div className="max-w-container-max mx-auto px-gutter h-16 flex justify-between items-center w-full">
           <div className="flex items-center gap-lg">
-            <Link className="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed" href="/login?tab=login">
+            <Link className="text-headline-md font-headline-md font-bold text-primary" href="/">
               EduVault
             </Link>
             {/* Desktop Navigation */}
             <ul className="hidden md:flex items-center gap-md">
               <li>
-                <Link className="text-label-md font-label-md text-secondary dark:text-secondary-fixed-dim border-b-2 border-secondary dark:border-secondary-fixed-dim pb-1 opacity-80 transition-opacity duration-150" href="/login?tab=login">
-                  Explore
+                <Link className="text-label-md font-label-md text-on-surface hover:text-primary transition-colors rounded px-2 py-1" href="/colleges">
+                  Explore Colleges
                 </Link>
               </li>
               <li>
-                <Link className="text-label-md font-label-md text-on-surface-variant dark:text-on-surface hover:text-primary dark:hover:text-primary-fixed hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors rounded px-2 py-1" href="/compare">
+                <Link className="text-label-md font-label-md text-on-surface hover:text-primary transition-colors rounded px-2 py-1" href="/compare">
                   Compare
+                </Link>
+              </li>
+              <li>
+                <Link className="text-label-md font-label-md text-on-surface hover:text-primary transition-colors rounded px-2 py-1" href="/predictor">
+                  Rank Predictor
                 </Link>
               </li>
             </ul>
           </div>
           <div className="flex items-center gap-sm">
             <ThemeToggle />
-            <button onClick={() => router.push("/login?tab=login")} className="hidden md:block text-label-md font-label-md text-on-surface-variant hover:text-primary px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
-              Sign In
-            </button>
+            {status === "authenticated" ? (
+              <div className="flex items-center gap-xs">
+                <Link href="/dashboard" className="hidden md:block text-label-md font-label-md bg-secondary text-on-secondary px-4 py-2 rounded-lg hover:opacity-90 transition-all font-bold">
+                  Dashboard
+                </Link>
+                <button 
+                  onClick={() => {
+                    signOut({ redirect: false });
+                    toast.success("Logged out successfully");
+                  }} 
+                  className="hidden md:block text-label-md font-label-md text-on-surface-variant hover:text-error px-3 py-2 rounded-lg hover:bg-surface-container-low transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link href="/login?tab=login" className="hidden md:block text-label-md font-label-md bg-primary text-on-primary hover:opacity-90 px-4 py-2 rounded-lg transition-all font-bold">
+                Sign In
+              </Link>
+            )}
             {/* Mobile Menu Toggle */}
-            <button onClick={() => router.push("/login?tab=login")} className="md:hidden text-on-surface p-2 rounded-lg hover:bg-surface-container-low">
+            <button onClick={() => router.push(status === "authenticated" ? "/dashboard" : "/login?tab=login")} className="md:hidden text-on-surface p-2 rounded-lg hover:bg-surface-container-low">
               <span className="material-symbols-outlined">menu</span>
             </button>
           </div>
@@ -60,10 +94,10 @@ export default function LandingPage() {
             <div className="absolute bottom-[-10%] left-[-5%] w-80 h-80 bg-tertiary-fixed-dim rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
           </div>
           <div className="max-w-container-max mx-auto relative z-10 flex flex-col items-center text-center">
-            <button onClick={() => router.push("/login?tab=login")} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-label-sm font-label-sm text-secondary mb-lg border border-surface-variant cursor-pointer">
+            <Link href="/colleges" className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-label-sm font-label-sm text-secondary mb-lg border border-surface-variant cursor-pointer hover:bg-surface-container-high transition-colors">
               <span className="material-symbols-outlined text-[16px] icon-fill">school</span>
               Trusted by 1M+ Students
-            </button>
+            </Link>
             <h1 className="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-primary max-w-4xl mb-md">
               Find Your Future. <br className="hidden md:block"/>Discover Top Colleges in India.
             </h1>
@@ -83,7 +117,7 @@ export default function LandingPage() {
                 />
               </div>
               <div className="flex items-center gap-2 px-2 md:px-0">
-                <button type="submit" className="w-full md:w-auto bg-secondary text-on-secondary px-6 py-3 rounded-lg text-label-md font-label-md hover:bg-secondary-container hover:text-on-secondary-container transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer font-bold">
+                <button type="submit" className="w-full md:w-auto bg-secondary text-on-secondary px-6 py-3 rounded-lg text-label-md font-label-md hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center gap-2 cursor-pointer font-bold">
                   Search
                 </button>
               </div>
@@ -92,12 +126,12 @@ export default function LandingPage() {
               <span>Popular:</span>
               <Link className="hover:text-secondary underline decoration-secondary/30 underline-offset-2 transition-colors" href="/colleges/iit-delhi">IIT Delhi</Link>
               <Link className="hover:text-secondary underline decoration-secondary/30 underline-offset-2 transition-colors" href="/colleges/bits-pilani">BITS Pilani</Link>
-              <Link className="hover:text-secondary underline decoration-secondary/30 underline-offset-2 transition-colors" href="/login?tab=login">B.Tech Computer Science</Link>
+              <Link className="hover:text-secondary underline decoration-secondary/30 underline-offset-2 transition-colors" href="/colleges?search=Computer+Science">Computer Science</Link>
             </div>
           </div>
         </section>
 
-        {/* Featured Colleges (Bento-ish Grid / Horizontal Scroll) */}
+        {/* Featured Colleges */}
         <section className="w-full py-xl px-gutter bg-surface">
           <div className="max-w-container-max mx-auto">
             <div className="flex justify-between items-end mb-lg">
@@ -105,11 +139,15 @@ export default function LandingPage() {
                 <h2 className="text-headline-lg font-headline-lg text-primary">Featured Institutions</h2>
                 <p className="text-body-md font-body-md text-on-surface-variant mt-xs">Highly ranked universities based on placements and infrastructure.</p>
               </div>
+              <Link href="/colleges" className="text-label-md font-label-md text-secondary hover:underline font-bold flex items-center gap-xs">
+                View All
+                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              </Link>
             </div>
-            {/* Horizontal Scroll Container for Mobile, Grid for Desktop */}
-            <div className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-4 -mx-gutter px-gutter md:mx-0 md:px-0 md:grid md:grid-cols-2 gap-md">
+            {/* Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
               {/* College Card 1 */}
-              <div onClick={() => router.push("/colleges/iit-delhi")} className="min-w-[85vw] md:min-w-0 flex-shrink-0 snap-center bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow group cursor-pointer">
+              <div onClick={() => router.push("/colleges/iit-delhi")} className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-all group cursor-pointer">
                 <div className="h-48 relative overflow-hidden bg-surface-container-high">
                   <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAN2JNF7bVw2nBekfVI3ibiKjOGV7_I114JHt9PxDBvrfrYoTCiUnIPNoa7mlSm84EkQgVp-WyUMZ7vkrOrzPlZ6ZK0I1sctziaiG1Y8GNyKFaQQCdAwRS3Lfw0oiswMi0x8YJSmAjgcDrAk6Ie8TXGYpYvo8-a5-4-QKGURBR5z_uCHE7ZbffvIaelkQKUbiJrX97kXHU4zHrSw8Bzhgxo4i5AA-jvPjA8o9JxWKuHhluycWC1aShGmjjL0Qyohnd06So1aGNNd2c')" }}>
                   </div>
@@ -137,8 +175,8 @@ export default function LandingPage() {
                       <p className="text-body-md font-body-md font-semibold text-tertiary-container mt-1">₹21.4L</p>
                     </div>
                     <div>
-                      <p className="text-label-sm font-label-sm text-on-surface-variant">Acceptance</p>
-                      <p className="text-body-md font-body-md font-semibold text-primary mt-1">1.2%</p>
+                      <p className="text-label-sm font-label-sm text-on-surface-variant">Established</p>
+                      <p className="text-body-md font-body-md font-semibold text-primary mt-1">1961</p>
                     </div>
                   </div>
                   <div className="mt-auto flex justify-between items-center">
@@ -148,14 +186,14 @@ export default function LandingPage() {
                 </div>
               </div>
               {/* College Card 2 */}
-              <div onClick={() => router.push("/colleges/bits-pilani")} className="min-w-[85vw] md:min-w-0 flex-shrink-0 snap-center bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-shadow group cursor-pointer">
+              <div onClick={() => router.push("/colleges/bits-pilani")} className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col hover:shadow-[0px_10px_30px_rgba(0,0,0,0.1)] transition-all group cursor-pointer">
                 <div className="h-48 relative overflow-hidden bg-surface-container-high">
                   <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBSguY97b6IYypoYD9dgTpt9G3aSIqhFLrjPEbk-MtKwbRWfJQliBBMy-s0twuvE_0ok5WtErcXOdwHNNH77S16Cv-Lfq8Q3JHm8HnvfAIwq5-30Yb8k2ruGhHJKBntz7aw_0uh_Y7mtQ9FKQiFfwE4xeLNSeFZUbkTPdpTrqiUDTQi05Thp-NsQUOuhpCxq-c2cGh_3rKvIdWQ3yXt0uKKwWKFxfDI7qZgc3WyJoW-H9QtAZ1bujWHKmF0j64otmdOn3HDQ-_PgO4')" }}>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute top-4 left-4 flex gap-2">
                     <span className="bg-tertiary-fixed-dim/90 backdrop-blur text-tertiary px-2 py-1 rounded text-label-sm font-label-sm flex items-center gap-1 shadow-sm">
-                      <span className="material-symbols-outlined text-[14px]">military_tech</span> #1 Private
+                      <span className="material-symbols-outlined text-[14px]">military_tech</span> #25 NIRF
                     </span>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4">
@@ -173,15 +211,15 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="text-label-sm font-label-sm text-on-surface-variant">Placement</p>
-                      <p className="text-body-md font-body-md font-semibold text-tertiary-container mt-1">₹30.3L</p>
+                      <p className="text-body-md font-body-md font-semibold text-tertiary-container mt-1">₹21.8L</p>
                     </div>
                     <div>
-                      <p className="text-label-sm font-label-sm text-on-surface-variant">Acceptance</p>
-                      <p className="text-body-md font-body-md font-semibold text-primary mt-1">1.5%</p>
+                      <p className="text-label-sm font-label-sm text-on-surface-variant">Established</p>
+                      <p className="text-body-md font-body-md font-semibold text-primary mt-1">1964</p>
                     </div>
                   </div>
                   <div className="mt-auto flex justify-between items-center">
-                    <span className="text-label-sm font-label-sm text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Engg &amp; Science</span>
+                    <span className="text-label-sm font-label-sm text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Engineering</span>
                     <button onClick={(e) => { e.stopPropagation(); router.push("/compare"); }} className="text-label-sm font-label-sm text-secondary font-semibold hover:text-secondary-container transition-colors cursor-pointer">Compare</button>
                   </div>
                 </div>
@@ -191,55 +229,62 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="w-full py-xl px-gutter bg-primary text-on-primary">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-headline-lg font-headline-lg mb-sm">Ready to make a decision?</h2>
-            <p className="text-body-lg font-body-lg text-on-primary/80 mb-lg max-w-2xl mx-auto">
+        <section className="w-full py-xl px-gutter bg-primary text-on-primary relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-[40%] h-full bg-white/5 skew-x-12 transform origin-top-right"></div>
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <h2 className="text-headline-lg font-headline-lg mb-sm text-white">Ready to make a decision?</h2>
+            <p className="text-body-lg font-body-lg text-white/80 mb-lg max-w-2xl mx-auto">
               Join 1M+ students who have successfully navigated their college discovery journey with EduVault.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 animate-in fade-in-50 duration-300">
-              <Link href="/compare" className="bg-secondary text-on-secondary px-8 py-4 rounded-lg text-label-md font-label-md font-bold hover:opacity-90 transition-opacity shadow-lg text-center cursor-pointer">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Link href="/compare" className="bg-secondary text-on-secondary px-8 py-4 rounded-lg text-label-md font-label-md font-bold hover:bg-secondary-container hover:text-on-secondary-container transition-all shadow-lg text-center cursor-pointer">
                 Start Your Comparison
               </Link>
-              <button onClick={() => router.push("/login?tab=login")} className="bg-transparent border-2 border-white/20 text-white px-8 py-4 rounded-lg text-label-md font-label-md font-bold hover:bg-white/10 hover:border-white/50 transition-colors text-center cursor-pointer">
-                Create Free Account
-              </button>
+              {status === "authenticated" ? (
+                <Link href="/colleges" className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-4 rounded-lg text-label-md font-label-md font-bold transition-colors text-center cursor-pointer">
+                  Explore Directories
+                </Link>
+              ) : (
+                <Link href="/login?tab=signup" className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-4 rounded-lg text-label-md font-label-md font-bold transition-colors text-center cursor-pointer">
+                  Create Free Account
+                </Link>
+              )}
             </div>
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-surface-container-lowest dark:bg-surface-container-high text-primary dark:text-on-primary-fixed w-full py-xl px-gutter border-t border-outline-variant dark:border-outline">
+      <footer className="bg-surface-container-lowest dark:bg-surface-container-high text-primary w-full py-xl px-gutter border-t border-outline-variant dark:border-outline">
         <div className="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-4 gap-lg">
           <div className="flex flex-col gap-4">
-            <Link className="text-headline-sm font-headline-sm font-bold text-primary dark:text-on-primary-fixed" href="/login?tab=login">EduVault</Link>
+            <Link className="text-headline-sm font-headline-sm font-bold text-primary" href="/">EduVault</Link>
             <p className="text-body-sm font-body-sm text-on-surface-variant">Empowering students to make data-driven educational choices.</p>
-            <div className="mt-auto pt-4 border-t border-outline-variant/30">
+            <div className="mt-auto pt-4">
               <p className="text-label-sm font-label-sm text-on-surface-variant">© 2026 EduVault Discovery. All rights reserved.</p>
             </div>
           </div>
           <div>
-            <h4 className="text-label-md font-label-md font-bold mb-4">Platform</h4>
+            <h4 className="text-label-md font-label-md font-bold mb-4 text-on-surface">Platform</h4>
             <ul className="flex flex-col gap-3">
-              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/login?tab=login">About Us</Link></li>
-              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/login?tab=login">Trust Badges</Link></li>
-              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/login?tab=login">Contact Support</Link></li>
+              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary transition-all" href="/colleges">Explore Colleges</Link></li>
+              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary transition-all" href="/compare">Compare Tool</Link></li>
+              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary transition-all" href="/predictor">Rank Predictor</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-label-md font-label-md font-bold mb-4">Legal</h4>
+            <h4 className="text-label-md font-label-md font-bold mb-4 text-on-surface">Legal</h4>
             <ul className="flex flex-col gap-3">
-              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/login?tab=login">Terms of Service</Link></li>
-              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/login?tab=login">Privacy Policy</Link></li>
+              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary transition-all" href="#">Terms of Service</Link></li>
+              <li><Link className="text-body-sm font-body-sm text-on-surface-variant hover:text-primary transition-all" href="#">Privacy Policy</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-label-md font-label-md font-bold mb-4">Stay Updated</h4>
+            <h4 className="text-label-md font-label-md font-bold mb-4 text-on-surface">Stay Updated</h4>
             <p className="text-body-sm font-body-sm text-on-surface-variant mb-3">Get the latest college rankings and admission insights.</p>
-            <form onSubmit={handleSearchSubmit} className="flex gap-2">
+            <form onSubmit={handleSubscribe} className="flex gap-2">
               <input className="w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-body-sm font-body-sm focus:ring-1 focus:ring-secondary focus:border-secondary outline-none text-on-surface" placeholder="Email address" type="email" required />
-              <button type="submit" className="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-sm font-label-sm hover:opacity-90 transition-opacity cursor-pointer">Subscribe</button>
+              <button type="submit" className="bg-secondary text-on-secondary hover:bg-secondary-container hover:text-on-secondary-container px-4 py-2 rounded-lg text-label-sm font-label-sm transition-colors cursor-pointer font-bold shrink-0">Subscribe</button>
             </form>
           </div>
         </div>

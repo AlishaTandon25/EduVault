@@ -1,5 +1,41 @@
 import { NextResponse } from "next/server";
+import { CollegesRepository } from "@/server/db/colleges.repository";
 
-export async function GET() {
-  return NextResponse.json({ message: "Hello" });
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+
+    const search = searchParams.get("search") || undefined;
+    const state = searchParams.get("state") || undefined;
+    const city = searchParams.get("city") || undefined;
+    const stream = searchParams.get("stream") || undefined;
+    const ownership = searchParams.get("ownership") || undefined;
+    const minFees = searchParams.get("minFees") ? Number(searchParams.get("minFees")) : undefined;
+    const maxFees = searchParams.get("maxFees") ? Number(searchParams.get("maxFees")) : undefined;
+    const minRating = searchParams.get("minRating") ? Number(searchParams.get("minRating")) : undefined;
+    const naacGrade = searchParams.get("naacGrade") || undefined;
+
+    const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+    const limit = searchParams.get("limit") ? Number(searchParams.get("limit")) : 10;
+    const sort = searchParams.get("sort") || undefined;
+
+    const filters = {
+      search,
+      state,
+      city,
+      stream,
+      ownership,
+      minFees,
+      maxFees,
+      minRating,
+      naacGrade,
+    };
+
+    const result = await CollegesRepository.findAll(filters, { page, limit }, sort);
+
+    return NextResponse.json(result);
+  } catch (error: any) {
+    console.error("Colleges GET error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }

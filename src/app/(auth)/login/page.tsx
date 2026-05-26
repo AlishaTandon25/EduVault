@@ -3,12 +3,20 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Form states
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
   // Sync tab with query parameters
   useEffect(() => {
@@ -24,9 +32,109 @@ function LoginContent() {
     setShowPassword(!showPassword);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/colleges");
+    if (isLoading) return;
+
+    setIsLoading(true);
+    const loadingToast = toast.loading("Signing in...");
+
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      toast.dismiss(loadingToast);
+
+      if (res?.error) {
+        toast.error(res.error || "Failed to sign in. Please try again.");
+      } else {
+        toast.success("Successfully signed in!");
+        router.push("/colleges");
+        router.refresh();
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoading) return;
+
+    setIsLoading(true);
+    const loadingToast = toast.loading("Creating your account...");
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+      toast.dismiss(loadingToast);
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to create account.");
+      } else {
+        toast.success("Account created successfully! Auto-logging you in...");
+        
+        // Auto sign-in
+        const loginRes = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+        });
+
+        if (loginRes?.error) {
+          toast.info("Registration complete. Please sign in manually.");
+          setActiveTab("login");
+        } else {
+          router.push("/colleges");
+          router.refresh();
+        }
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    const loadingToast = toast.loading("Logging into Demo account...");
+
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: "alisha@example.com",
+        password: "password123",
+      });
+
+      toast.dismiss(loadingToast);
+
+      if (res?.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Welcome back to Demo account!");
+        router.push("/colleges");
+        router.refresh();
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error("Demo login failed.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -78,6 +186,7 @@ function LoginContent() {
           {/* Tabs */}
           <div className="flex border-b border-outline-variant mb-lg relative">
             <button 
+              disabled={isLoading}
               onClick={() => setActiveTab("login")} 
               className={`w-1/2 pb-sm text-label-md font-label-md relative z-10 focus:outline-none transition-colors border-b-2 font-bold cursor-pointer ${
                 activeTab === "login" 
@@ -88,6 +197,7 @@ function LoginContent() {
               Sign In
             </button>
             <button 
+              disabled={isLoading}
               onClick={() => setActiveTab("signup")} 
               className={`w-1/2 pb-sm text-label-md font-label-md relative z-10 focus:outline-none transition-colors border-b-2 font-bold cursor-pointer ${
                 activeTab === "signup" 
@@ -106,13 +216,16 @@ function LoginContent() {
                 <h2 className="text-headline-sm font-headline-sm text-on-surface">Welcome back</h2>
                 <p className="text-body-sm font-body-sm text-on-surface-variant">Enter your credentials to access your dashboard.</p>
               </div>
-              <form className="flex flex-col gap-md" onSubmit={handleFormSubmit}>
+              <form className="flex flex-col gap-md" onSubmit={handleLogin}>
                 {/* Email Field */}
                 <div className="flex flex-col gap-base">
                   <label className="text-label-sm font-label-sm text-on-surface-variant" htmlFor="email">Email Address</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">mail</span>
                     <input 
+                      disabled={isLoading}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-xl pr-sm py-sm rounded-md border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-shadow bg-surface-bright text-body-sm font-body-sm text-on-surface placeholder-on-surface-variant/50" 
                       id="email" 
                       placeholder="student@example.com" 
@@ -130,6 +243,9 @@ function LoginContent() {
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">lock</span>
                     <input 
+                      disabled={isLoading}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full pl-xl pr-xl py-sm rounded-md border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-shadow bg-surface-bright text-body-sm font-body-sm text-on-surface placeholder-on-surface-variant/50" 
                       id="password" 
                       placeholder="••••••••" 
@@ -137,6 +253,7 @@ function LoginContent() {
                       type={showPassword ? "text" : "password"}
                     />
                     <button 
+                      disabled={isLoading}
                       className="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-on-surface focus:outline-none flex items-center justify-center cursor-pointer" 
                       onClick={togglePassword} 
                       type="button"
@@ -146,11 +263,12 @@ function LoginContent() {
                   </div>
                 </div>
                 <button 
-                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md py-sm rounded-md transition-all mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold" 
+                  disabled={isLoading}
+                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md py-sm rounded-md transition-all mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold disabled:opacity-50" 
                   type="submit"
                 >
-                  Sign In
-                  <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  {isLoading ? "Signing In..." : "Sign In"}
+                  {!isLoading && <span className="material-symbols-outlined text-[18px]">arrow_forward</span>}
                 </button>
               </form>
               <div className="relative flex py-sm items-center">
@@ -159,8 +277,9 @@ function LoginContent() {
                 <div className="flex-grow border-t border-outline-variant"></div>
               </div>
               <button 
-                onClick={handleFormSubmit}
-                className="w-full bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container text-label-md font-label-md py-sm rounded-md transition-colors flex justify-center items-center gap-xs shadow-sm border border-secondary-fixed-dim/30 cursor-pointer font-bold" 
+                disabled={isLoading}
+                onClick={handleDemoLogin}
+                className="w-full bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container text-label-md font-label-md py-sm rounded-md transition-colors flex justify-center items-center gap-xs shadow-sm border border-secondary-fixed-dim/30 cursor-pointer font-bold disabled:opacity-50" 
                 type="button"
               >
                 Demo Login
@@ -174,13 +293,16 @@ function LoginContent() {
                 <h2 className="text-headline-sm font-headline-sm text-on-surface">Start discovering</h2>
                 <p className="text-body-sm font-body-sm text-on-surface-variant">Create an account to save your favorite institutions.</p>
               </div>
-              <form className="flex flex-col gap-md" onSubmit={handleFormSubmit}>
+              <form className="flex flex-col gap-md" onSubmit={handleSignup}>
                 {/* Full Name Field */}
                 <div className="flex flex-col gap-base">
                   <label className="text-label-sm font-label-sm text-on-surface-variant" htmlFor="signup-name">Full Name</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">person</span>
                     <input 
+                      disabled={isLoading}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       className="w-full pl-xl pr-sm py-sm rounded-md border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-shadow bg-surface-bright text-body-sm font-body-sm text-on-surface placeholder-on-surface-variant/50" 
                       id="signup-name" 
                       placeholder="Alisha Tandon" 
@@ -195,6 +317,9 @@ function LoginContent() {
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">mail</span>
                     <input 
+                      disabled={isLoading}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-xl pr-sm py-sm rounded-md border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-shadow bg-surface-bright text-body-sm font-body-sm text-on-surface placeholder-on-surface-variant/50" 
                       id="signup-email" 
                       placeholder="student@example.com" 
@@ -209,6 +334,9 @@ function LoginContent() {
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">lock</span>
                     <input 
+                      disabled={isLoading}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full pl-xl pr-xl py-sm rounded-md border border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-shadow bg-surface-bright text-body-sm font-body-sm text-on-surface placeholder-on-surface-variant/50" 
                       id="signup-password" 
                       placeholder="••••••••" 
@@ -218,11 +346,12 @@ function LoginContent() {
                   </div>
                 </div>
                 <button 
-                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md py-sm rounded-md transition-all mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold" 
+                  disabled={isLoading}
+                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md py-sm rounded-md transition-all mt-xs flex justify-center items-center gap-xs cursor-pointer font-bold disabled:opacity-50" 
                   type="submit"
                 >
-                  Create Account
-                  <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  {isLoading ? "Creating Account..." : "Create Account"}
+                  {!isLoading && <span className="material-symbols-outlined text-[18px]">arrow_forward</span>}
                 </button>
               </form>
             </div>

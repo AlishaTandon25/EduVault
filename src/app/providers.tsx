@@ -37,6 +37,10 @@ export function useCompare() {
   return context;
 }
 
+import { SessionProvider } from "next-auth/react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query-client";
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [comparedColleges, setComparedColleges] = useState<College[]>([]);
   const [isMounted, setIsMounted] = useState(false);
@@ -95,19 +99,23 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-      <CompareContext.Provider
-        value={{
-          comparedColleges,
-          addToCompare,
-          removeFromCompare,
-          clearCompare,
-          isCompared,
-        }}
-      >
-        {children}
-        <Toaster position="bottom-right" richColors />
-      </CompareContext.Provider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <CompareContext.Provider
+            value={{
+              comparedColleges,
+              addToCompare,
+              removeFromCompare,
+              clearCompare,
+              isCompared,
+            }}
+          >
+            {children}
+            <Toaster position="bottom-right" richColors />
+          </CompareContext.Provider>
+        </ThemeProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }

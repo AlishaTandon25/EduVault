@@ -4,303 +4,228 @@ import React, { useState, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useSession, signOut } from "next-auth/react";
+import { useCollegeDetail } from "@/hooks/queries/use-colleges";
+import { useSaveCollege, useUnsaveCollege } from "@/hooks/queries/use-saved-colleges";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { getCollegeImageUrl } from "@/lib/college-image";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default function CollegeDetailsPage({ params }: PageProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data: session, status } = useSession();
+  
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
 
-  const isBITS = slug === "bits-pilani";
-  const [searchQuery, setSearchQuery] = useState("");
+  const { data: college, isLoading, error } = useCollegeDetail(slug);
+  const { mutate: saveCollege } = useSaveCollege();
+  const { mutate: unsaveCollege } = useUnsaveCollege();
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/colleges?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
+  // Active Tab
+  const [activeTab, setActiveTab] = useState<"overview" | "courses" | "reviews" | "qa">("overview");
 
-  const handleApplyNow = () => {
-    alert("Application successfully initiated!");
-  };
+  // Review Form States
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewComment, setReviewComment] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-  const handleDownloadBrochure = () => {
-    alert("College Brochure download initiated!");
-  };
+  // Question Form States
+  const [questionText, setQuestionText] = useState("");
+  const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
 
-  if (isBITS) {
+  // Answer Form States (questionId -> answerText)
+  const [activeQuestionIdForAnswer, setActiveQuestionIdForAnswer] = useState<string | null>(null);
+  const [answerText, setAnswerText] = useState("");
+  const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+
+  if (isLoading) {
     return (
-      <div className="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col w-full">
-        {/* TopNavBar */}
-        <nav className="bg-surface/95 docked full-width top-0 sticky border-b border-outline-variant backdrop-blur-md shadow-sm z-50 w-full">
-          <div className="max-w-container-max mx-auto px-gutter h-16 flex justify-between items-center w-full">
-            <div className="flex items-center gap-lg">
-              <Link className="text-headline-md font-headline-md font-bold text-primary" href="/">
-                EduVault
-              </Link>
-              <div className="hidden md:flex gap-sm">
-                <Link className="text-label-md font-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-1 rounded" href="/colleges">
-                  Explore
-                </Link>
-                <Link className="text-label-md font-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-1 rounded" href="/compare">
-                  Compare
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-md">
-              <form onSubmit={handleSearchSubmit} className="hidden lg:flex relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
-                <input
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full text-body-sm font-body-sm focus:border-secondary focus:ring-1 focus:ring-secondary outline-none w-64 transition-all text-on-surface"
-                  placeholder="Search colleges..."
-                  type="text"
-                />
-              </form>
-              <ThemeToggle />
-              <button onClick={() => router.push("/login?tab=login")} className="text-label-md font-label-md text-secondary hover:bg-surface-container-low px-4 py-2 rounded-lg transition-colors cursor-pointer">
-                Sign In
-              </button>
-            </div>
-          </div>
-        </nav>
-
-        {/* Hero Section */}
-        <section className="relative w-full h-[360px] flex items-end pb-12 mb-16 overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBSguY97b6IYypoYD9dgTpt9G3aSIqhFLrjPEbk-MtKwbRWfJQliBBMy-s0twuvE_0ok5WtErcXOdwHNNH77S16Cv-Lfq8Q3JHm8HnvfAIwq5-30Yb8k2ruGhHJKBntz7aw_0uh_Y7mtQ9FKQiFfwE4xeLNSeFZUbkTPdpTrqiUDTQi05Thp-NsQUOuhpCxq-c2cGh_3rKvIdWQ3yXt0uKKwWKFxfDI7qZgc3WyJoW-H9QtAZ1bujWHKmF0j64otmdOn3HDQ-_PgO4')",
-            }}
-          ></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#091426]/95 via-[#091426]/60 to-transparent"></div>
-          <div className="relative w-full px-6 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6 z-10">
-            <div className="flex items-end gap-6 flex-wrap md:flex-nowrap">
-              <div className="w-28 h-28 bg-white rounded-xl p-2 shadow-lg border border-outline-variant flex-shrink-0 flex items-center justify-center">
-                <img
-                  alt="BITS Pilani Logo"
-                  className="w-full h-full object-contain rounded-lg"
-                  src="https://lh3.googleusercontent.com/aida/ADBb0ujPVemK4t2TpXecclL2Gw70nvCLxN3zP1CcaFNuv8QySLXAkKPjoBj_QKUvYizhrMriTaEwFU-ebPEcRLyI98US_xPevEvuGLPu6frs5OFl0YZwowGOo3dBNJw3d47i_9-BL69fza7kQKs_4ToSOtZt9aHj9tCJ6ksODkN8S9w1oA6Gj0Mm--3At4-lPOb1X8SCnQMNgwEJiFLCu7_0_ed45UAnzwqt_uDj-xvxbgf6DTM9C9YukijPDRk"
-                />
-              </div>
-              <div className="text-on-primary pb-1">
-                <div className="flex items-center gap-3 mb-2.5 flex-wrap">
-                  <span className="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">verified</span> Verified
-                  </span>
-                  <span className="bg-white/20 backdrop-blur-sm text-on-primary px-3 py-1 rounded-full text-xs font-semibold">
-                    Private Institute
-                  </span>
-                </div>
-                <h1 className="text-3xl md:text-5xl font-extrabold mb-2.5">BITS Pilani</h1>
-                <p className="text-base text-primary-fixed-dim flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]">location_on</span> Pilani, Rajasthan
-                </p>
-              </div>
-            </div>
-            <div className="pb-1 w-full md:w-auto">
-              <button
-                onClick={handleApplyNow}
-                className="w-full md:w-auto bg-secondary text-on-secondary hover:bg-secondary/90 transition-colors shadow-lg px-8 py-4 rounded-xl text-base font-bold flex items-center justify-center gap-2 cursor-pointer"
-              >
-                Apply Now
-                <span className="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Bar */}
-        <div className="px-6 max-w-7xl mx-auto -mt-20 relative z-20 mb-12">
-          <div className="bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.05)] border border-outline-variant p-2">
-            <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-outline-variant">
-              <div className="p-6 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors rounded-l-lg">
-                <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-2">NAAC Rating</div>
-                <div className="text-3xl font-extrabold text-primary flex items-baseline gap-1">
-                  A <span className="text-lg font-bold text-tertiary-fixed-dim">+</span>
-                </div>
-              </div>
-              <div className="p-6 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors">
-                <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-2">Highest Package</div>
-                <div className="text-3xl font-extrabold text-primary">
-                  60.75 <span className="text-lg font-bold text-on-surface-variant">L</span>
-                </div>
-              </div>
-              <div className="p-6 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors">
-                <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-2">B.Tech Fees</div>
-                <div className="text-3xl font-extrabold text-primary">
-                  22.5 <span className="text-lg font-bold text-on-surface-variant">L</span>
-                </div>
-              </div>
-              <div className="p-6 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors rounded-r-lg">
-                <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-2">NIRF Engg. Rank</div>
-                <div className="text-3xl font-extrabold text-primary">#25</div>
-              </div>
-            </div>
-          </div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-md">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-body-md text-on-surface-variant animate-pulse font-bold">Loading college details...</p>
         </div>
-
-        {/* Main Content Area */}
-        <div className="px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 pb-16">
-          {/* Content Canvas */}
-          <div className="md:col-span-8 space-y-12">
-            {/* Secondary Sticky Nav */}
-            <div className="bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant sticky top-16 z-40 py-3 flex gap-6 overflow-x-auto no-scrollbar">
-              <a href="#overview" className="text-secondary border-b-2 border-secondary pb-2 text-sm font-semibold whitespace-nowrap">
-                Overview
-              </a>
-              <a href="#placements" className="text-on-surface-variant hover:text-primary transition-colors pb-2 text-sm font-semibold whitespace-nowrap">
-                Placements
-              </a>
-            </div>
-
-            {/* Overview Section */}
-            <section className="scroll-mt-32" id="overview">
-              <h2 className="text-2xl font-bold text-primary mb-6">Institution Overview</h2>
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
-                <p className="text-base md:text-lg text-on-surface-variant mb-6 leading-relaxed">
-                  Birla Institute of Technology and Science (BITS) Pilani is one of India's premier engineering and science institutes. Renowned for its rigorous academic curriculum and vibrant campus life, it operates as a deemed university and is consistently ranked among the top technical institutes in the country.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
-                  <div className="bg-surface-container-low p-6 rounded-lg border border-surface-variant flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0 text-secondary">
-                      <span className="material-symbols-outlined">school</span>
-                    </div>
-                    <div>
-                      <h3 className="text-base font-bold text-primary mb-2">Zero Attendance Policy</h3>
-                      <p className="text-sm text-on-surface-variant">
-                        A hallmark of the BITS educational model, allowing students the flexibility to manage their own learning schedules and pursue extracurricular passions.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-surface-container-low p-6 rounded-lg border border-surface-variant flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-tertiary-container/10 text-on-tertiary-container flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined">corporate_fare</span>
-                    </div>
-                    <div>
-                      <h3 className="text-base font-bold text-primary mb-2">Startup Culture</h3>
-                      <p className="text-sm text-on-surface-variant">
-                        Home to a thriving ecosystem of innovation, supported by dedicated incubators that have birthed numerous successful unicorns and tech startups.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Placements Section */}
-            <section className="scroll-mt-32" id="placements">
-              <h2 className="text-2xl font-bold text-primary mb-6">Placement Highlights</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {/* Bento Item 1 */}
-                <div className="md:col-span-2 bg-gradient-to-br from-[#091426] to-[#1e293b] rounded-xl p-6 md:p-8 text-white shadow-sm relative overflow-hidden group">
-                  <div className="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <span className="material-symbols-outlined text-[150px]">trending_up</span>
-                  </div>
-                  <div className="relative z-10">
-                    <div className="text-xs font-semibold text-sky-300 uppercase tracking-wider mb-2">Highest Domestic Package</div>
-                    <div className="text-4xl font-extrabold mb-2 text-white">₹60.75 LPA</div>
-                    <p className="text-sm text-slate-300">Secured during the recent placement drive for top engineering roles.</p>
-                  </div>
-                </div>
-                {/* Bento Item 2 */}
-                <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col justify-center">
-                  <div className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Average Package</div>
-                  <div className="text-2xl font-bold text-secondary mb-1">₹21.8 LPA</div>
-                  <div className="flex items-center gap-1 text-tertiary-fixed-dim text-xs font-semibold">
-                    <span className="material-symbols-outlined text-[14px]">trending_up</span>
-                    <span className="text-emerald-500">12% YoY Growth</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Top Recruiters */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
-                <h3 className="text-lg font-bold text-primary mb-6 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-secondary">work</span>
-                  Top Recruiters
-                </h3>
-                <div className="flex flex-wrap gap-4">
-                  {["Apple", "Amazon", "Uber", "Microsoft", "Google"].map((company) => (
-                    <div
-                      key={company}
-                      className="px-6 py-3 bg-surface border border-outline-variant rounded-lg flex items-center gap-3 hover:border-secondary transition-colors cursor-default"
-                    >
-                      <div className="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-bold">
-                        {company.slice(0, 1)}
-                      </div>
-                      <span className="text-sm font-semibold text-on-surface">{company}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-          </div>
-
-          {/* Sidebar / Contextual Actions */}
-          <div className="md:col-span-4 space-y-6">
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] sticky top-32">
-              <h3 className="text-lg font-bold text-primary mb-2">Interested in BITS?</h3>
-              <p className="text-xs text-on-surface-variant mb-6">
-                Applications for the BITSAT entrance exam are currently open. Check eligibility before applying.
-              </p>
-              <button
-                onClick={handleApplyNow}
-                className="w-full bg-primary hover:opacity-90 text-on-primary py-3 rounded-lg text-sm font-bold transition-all mb-3 cursor-pointer"
-              >
-                Apply via BITSAT
-              </button>
-              <button
-                onClick={handleDownloadBrochure}
-                className="w-full bg-surface border border-outline-variant text-primary py-3 rounded-lg text-sm font-semibold hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[18px]">download</span>
-                Download Brochure
-              </button>
-              <div className="mt-6 pt-6 border-t border-outline-variant">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-on-surface-variant font-medium">Application Deadline</span>
-                  <span className="font-bold text-red-500">15 May, 2026</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <footer className="bg-surface-container-lowest border-t border-outline-variant w-full py-xl px-gutter mt-auto">
-          <div className="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-4 gap-lg">
-            <div>
-              <Link className="text-headline-sm font-headline-sm font-bold text-primary" href="/">
-                EduVault
-              </Link>
-              <p className="text-body-sm font-body-sm text-on-surface-variant mt-2">© 2026 EduVault Discovery. All rights reserved.</p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">About Us</Link>
-              <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Terms of Service</Link>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Privacy Policy</Link>
-              <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Contact Support</Link>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Trust Badges</Link>
-              <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Newsletter</Link>
-            </div>
-          </div>
-        </footer>
       </div>
     );
   }
 
-  // IIT Delhi details view
+  if (error || !college) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background text-center p-gutter">
+        <span className="material-symbols-outlined text-[64px] text-error mb-sm">error</span>
+        <h1 className="text-headline-md font-headline-md text-on-surface font-bold">College Not Found</h1>
+        <p className="text-body-md text-on-surface-variant max-w-sm mt-xs mb-lg">
+          We couldn't retrieve the details for this institution. It may have been removed or the link is broken.
+        </p>
+        <Link href="/colleges" className="bg-primary text-on-primary px-6 py-3 rounded-lg text-label-md font-label-md font-bold hover:opacity-90 transition-all shadow-md">
+          Return to Discovery
+        </Link>
+      </div>
+    );
+  }
+
+  const handleApplyNow = () => {
+    if (college.website) {
+      toast.success(`Redirecting to official website for ${college.name}...`);
+      window.open(college.website, "_blank");
+    } else {
+      toast.success("Application successfully initiated! Our advisors will contact you shortly.");
+    }
+  };
+
+  const handleDownloadBrochure = () => {
+    toast.success(`Brochure download started for ${college.name}!`);
+  };
+
+  const handleSaveToggle = () => {
+    if (status !== "authenticated") {
+      toast.error("Please sign in to save colleges.");
+      router.push("/login?tab=login");
+      return;
+    }
+    if (college.isSaved) {
+      unsaveCollege(college.id);
+    } else {
+      saveCollege(college.id);
+    }
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (status !== "authenticated") {
+      toast.error("Please sign in to write reviews.");
+      router.push("/login?tab=login");
+      return;
+    }
+    if (!reviewTitle.trim() || !reviewComment.trim()) {
+      toast.warning("Please fill out all fields.");
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    const loadingToast = toast.loading("Submitting review...");
+
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rating: reviewRating,
+          title: reviewTitle,
+          comment: reviewComment,
+          collegeId: college.id,
+        }),
+      });
+
+      const data = await res.json();
+      toast.dismiss(loadingToast);
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to submit review.");
+      } else {
+        toast.success("Review posted successfully!");
+        setReviewTitle("");
+        setReviewComment("");
+        queryClient.invalidateQueries({ queryKey: ["college", slug] });
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error("Failed to post review.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleQuestionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (status !== "authenticated") {
+      toast.error("Please sign in to ask questions.");
+      router.push("/login?tab=login");
+      return;
+    }
+    if (!questionText.trim()) return;
+
+    setIsSubmittingQuestion(true);
+    const loadingToast = toast.loading("Posting question...");
+
+    try {
+      const res = await fetch("/api/questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: questionText,
+          collegeId: college.id,
+        }),
+      });
+
+      const data = await res.json();
+      toast.dismiss(loadingToast);
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to ask question.");
+      } else {
+        toast.success("Question posted to Q&A Board!");
+        setQuestionText("");
+        queryClient.invalidateQueries({ queryKey: ["college", slug] });
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error("Failed to post question.");
+    } finally {
+      setIsSubmittingQuestion(false);
+    }
+  };
+
+  const handleAnswerSubmit = async (e: React.FormEvent, questionId: string) => {
+    e.preventDefault();
+    if (status !== "authenticated") {
+      toast.error("Please sign in to answer questions.");
+      router.push("/login?tab=login");
+      return;
+    }
+    if (!answerText.trim()) return;
+
+    setIsSubmittingAnswer(true);
+    const loadingToast = toast.loading("Submitting answer...");
+
+    try {
+      const res = await fetch(`/api/questions/${questionId}/answers`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answer: answerText }),
+      });
+
+      const data = await res.json();
+      toast.dismiss(loadingToast);
+
+      if (!res.ok) {
+        toast.error(data.error || "Failed to submit answer.");
+      } else {
+        toast.success("Answer posted successfully!");
+        setAnswerText("");
+        setActiveQuestionIdForAnswer(null);
+        queryClient.invalidateQueries({ queryKey: ["college", slug] });
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error("Failed to post answer.");
+    } finally {
+      setIsSubmittingAnswer(false);
+    }
+  };
+
+  // Specific high quality fall-back logotype / emblem if logoUrl is broken
+  const fallbackLogoText = college.name.split(" ").map((w: string) => w[0]).join("").substring(0, 3);
+
   return (
     <div className="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col w-full">
       {/* TopNavBar */}
@@ -311,190 +236,454 @@ export default function CollegeDetailsPage({ params }: PageProps) {
               EduVault
             </Link>
             <div className="hidden md:flex gap-sm">
-              <Link className="text-label-md font-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-1 rounded" href="/colleges">
+              <Link className="text-label-md font-label-md text-on-surface hover:text-primary transition-colors px-xs py-1 rounded" href="/colleges">
                 Explore
               </Link>
-              <Link className="text-label-md font-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors px-xs py-1 rounded" href="/compare">
+              <Link className="text-label-md font-label-md text-on-surface hover:text-primary transition-colors px-xs py-1 rounded" href="/compare">
                 Compare
+              </Link>
+              <Link className="text-label-md font-label-md text-on-surface hover:text-primary transition-colors px-xs py-1 rounded" href="/predictor">
+                Rank Predictor
               </Link>
             </div>
           </div>
           <div className="flex items-center gap-md">
-            <form onSubmit={handleSearchSubmit} className="hidden lg:flex relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
-              <input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full text-body-sm font-body-sm focus:border-secondary focus:ring-1 focus:ring-secondary outline-none w-64 transition-all text-on-surface"
-                placeholder="Search colleges..."
-                type="text"
-              />
-            </form>
             <ThemeToggle />
-            <button onClick={() => router.push("/login?tab=login")} className="text-label-md font-label-md text-secondary hover:bg-surface-container-low px-4 py-2 rounded-lg transition-colors cursor-pointer">
-              Sign In
-            </button>
+            {status === "authenticated" ? (
+              <div className="flex items-center gap-xs">
+                <Link href="/dashboard" className="text-label-md font-label-md bg-secondary text-on-secondary px-4 py-2 rounded-lg hover:opacity-90 transition-all font-bold">
+                  Dashboard
+                </Link>
+                <button 
+                  onClick={() => {
+                    signOut({ redirect: false });
+                    toast.success("Logged out successfully");
+                  }} 
+                  className="text-label-md font-label-md text-on-surface-variant hover:text-error px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link href="/login?tab=login" className="text-label-md font-label-md bg-primary text-on-primary hover:opacity-90 px-4 py-2 rounded-lg transition-all font-bold">
+                Sign In
+              </Link>
+            )}
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <header className="relative w-full bg-surface-container-lowest">
-        <div className="h-64 md:h-80 w-full relative overflow-hidden">
-          <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN2JNF7bVw2nBekfVI3ibiKjOGV7_I114JHt9PxDBvrfrYoTCiUnIPNoa7mlSm84EkQgVp-WyUMZ7vkrOrzPlZ6ZK0I1sctziaiG1Y8GNyKFaQQCdAwRS3Lfw0oiswMi0x8YJSmAjgcDrAk6Ie8TXGYpYvo8-a5-4-QKGURBR5z_uCHE7ZbffvIaelkQKUbiJrX97kXHU4zHrSw8Bzhgxo4i5AA-jvPjA8o9JxWKuHhluycWC1aShGmjjL0Qyohnd06So1aGNNd2c"
-            alt="IIT Delhi Campus entrance"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 relative -mt-16 md:-mt-24 z-10">
-          <div className="bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.1)] border border-outline-variant p-6 md:p-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="flex flex-col md:flex-row gap-6 items-start md:items-end">
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg bg-surface flex-shrink-0 border border-outline-variant shadow-sm flex items-center justify-center p-2">
-                <span className="text-xl md:text-2xl font-extrabold text-primary">IITD</span>
+      <section className="relative w-full h-[360px] flex items-end pb-12 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('${getCollegeImageUrl(college.slug, college.imageUrl, college.name, college.stream, college.city)}')`,
+          }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+        <div className="relative w-full px-6 max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6 z-10">
+          <div className="flex items-end gap-6 flex-wrap md:flex-nowrap">
+            <div className="w-24 h-24 bg-white rounded-xl p-2 shadow-lg border border-outline-variant flex-shrink-0 flex items-center justify-center">
+              {college.logoUrl ? (
+                <img
+                  alt={`${college.name} Logo`}
+                  className="w-full h-full object-contain rounded-lg"
+                  src={college.logoUrl}
+                  onError={(e) => {
+                    // fall back to emblem
+                    (e.target as HTMLElement).style.display = "none";
+                  }}
+                />
+              ) : (
+                <div className="text-headline-sm font-extrabold text-primary select-none">{fallbackLogoText}</div>
+              )}
+            </div>
+            <div className="pb-1">
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
+                <span className="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-sm">
+                  <span className="material-symbols-outlined text-[14px]">verified</span> Verified
+                </span>
+                <span className="bg-surface-container-high text-on-surface px-3 py-1 rounded-full text-xs font-semibold capitalize">
+                  {college.ownership.toLowerCase().replace("_", " ")} Institute
+                </span>
               </div>
-              <div className="flex flex-col gap-1 pb-1">
-                <h1 className="text-2xl md:text-4xl font-extrabold text-primary">
-                  Indian Institute of Technology Delhi
-                </h1>
-                <div className="flex items-center gap-1 flex-wrap text-sm text-on-surface-variant">
-                  <span className="material-symbols-outlined text-[16px]">location_on</span>
-                  <span>New Delhi, Delhi NCR</span>
-                  <span className="mx-2 font-light">•</span>
-                  <span className="bg-tertiary-container/10 text-on-tertiary-container px-2 py-0.5 rounded text-xs font-semibold border border-tertiary-container/20 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">military_tech</span>
-                    Institute of Eminence
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex-shrink-0 pb-1 w-full md:w-auto">
-              <button
-                onClick={handleApplyNow}
-                className="w-full md:w-auto bg-secondary text-on-secondary px-8 py-3 rounded-lg font-semibold shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
-              >
-                Apply Now
-                <span className="material-symbols-outlined">chevron_right</span>
-              </button>
+              <h1 className="text-3xl md:text-5xl font-extrabold mb-2 text-primary">{college.name}</h1>
+              <p className="text-base text-on-surface-variant flex items-center gap-xs font-semibold">
+                <span className="material-symbols-outlined text-[18px] text-secondary">location_on</span> {college.location}
+              </p>
             </div>
           </div>
-        </div>
-      </header>
-
-      {/* Stats Bar */}
-      <section className="max-w-7xl mx-auto w-full px-6 mt-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
-            <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">NAAC Rating</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-primary">A++</span>
-              <span className="material-symbols-outlined text-[18px] text-emerald-500">military_tech</span>
-            </div>
-          </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-secondary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
-            <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">Highest Package</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-primary">2.05 Cr</span>
-              <span className="text-on-surface-variant text-xs">/ yr</span>
-            </div>
-          </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
-            <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">B.Tech Fees</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-primary">8.5 L</span>
-              <span className="text-on-surface-variant text-xs">Total</span>
-            </div>
-          </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-1 relative overflow-hidden group">
-            <div className="absolute -right-4 -top-4 w-16 h-16 bg-secondary/5 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out"></div>
-            <span className="text-on-surface-variant text-xs font-bold uppercase tracking-wider">NIRF Rank</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-primary">#2</span>
-              <span className="text-on-surface-variant text-xs">Engineering</span>
-            </div>
+          <div className="pb-1 w-full md:w-auto flex gap-2">
+            <button
+              onClick={handleSaveToggle}
+              className="bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-primary p-4 rounded-xl flex items-center justify-center shadow-md cursor-pointer transition-colors"
+            >
+              <span className={`material-symbols-outlined ${college.isSaved ? "text-secondary icon-fill" : ""}`}>
+                {college.isSaved ? "bookmark" : "bookmark_border"}
+              </span>
+            </button>
+            <button
+              onClick={handleApplyNow}
+              className="flex-grow md:flex-grow-0 bg-secondary text-on-secondary hover:opacity-90 transition-all shadow-md px-6 py-4 rounded-xl text-base font-bold flex items-center justify-center gap-2 cursor-pointer"
+            >
+              Apply Now
+              <span className="material-symbols-outlined">chevron_right</span>
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto w-full px-6 mt-12 flex flex-col md:flex-row gap-8 items-start pb-16">
-        <div className="hidden md:flex flex-col w-64 flex-shrink-0 sticky top-[80px]">
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] p-4 flex flex-col gap-2">
-            <a href="#overview" className="bg-secondary-container text-on-secondary-container rounded-lg px-4 py-3 text-sm font-semibold flex items-center gap-3 transition-colors">
-              <span className="material-symbols-outlined">info</span>
-              Overview
-            </a>
-            <a href="#placements" className="text-on-surface-variant hover:bg-surface-container-low rounded-lg px-4 py-3 text-sm font-semibold flex items-center gap-3 transition-colors">
-              <span className="material-symbols-outlined">work</span>
-              Placements
-            </a>
+      {/* Stats Bar */}
+      <div className="px-6 max-w-7xl mx-auto mt-4 relative z-20 mb-12">
+        <div className="bg-surface-container-lowest rounded-xl shadow-[0px_10px_30px_rgba(0,0,0,0.05)] border border-outline-variant p-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-outline-variant">
+            <div className="p-4 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors rounded-l-lg">
+              <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">NAAC Rating</div>
+              <div className="text-2xl font-extrabold text-primary flex items-baseline gap-1">
+                {college.naacGrade || "N/A"}
+              </div>
+            </div>
+            <div className="p-4 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors">
+              <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Highest Placement</div>
+              <div className="text-2xl font-extrabold text-primary">
+                {college.highestPackage ? `₹${college.highestPackage} L` : "N/A"}
+              </div>
+            </div>
+            <div className="p-4 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors">
+              <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Avg annual fee</div>
+              <div className="text-2xl font-extrabold text-primary">
+                ₹{(college.fees / 100000).toFixed(1)} L
+              </div>
+            </div>
+            <div className="p-4 flex flex-col items-center justify-center text-center group hover:bg-surface-container-low transition-colors rounded-r-lg">
+              <div className="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">NIRF Ranking</div>
+              <div className="text-2xl font-extrabold text-primary">#{college.nirfRank || "N/A"}</div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="flex-grow flex flex-col gap-12 w-full">
-          {/* Overview Section */}
-          <section className="scroll-mt-32" id="overview">
-            <h2 className="text-xl font-bold text-primary border-b border-outline-variant pb-2 mb-6">About the Institution</h2>
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)]">
-              <p className="text-base md:text-lg text-on-surface-variant leading-relaxed mb-6">
-                Indian Institute of Technology Delhi is one of the Twenty Three IITs created to be Centres of Excellence for training, research and development in science, engineering and technology in India. Established as College of Engineering in 1961, the Institute was later declared an Institution of National Importance under the "Institutes of Technology (Amendment) Act, 1963" and was renamed as "Indian Institute of Technology Delhi".
-              </p>
-              <p className="text-base md:text-lg text-on-surface-variant leading-relaxed">
-                Recognized as an <strong>Institute of Eminence</strong> by the Government of India, IIT Delhi continues to set global benchmarks in academic excellence, cutting-edge research, and innovation. The campus spans 320 acres in the heart of the national capital, providing a vibrant ecosystem for students and researchers.
-              </p>
-            </div>
-          </section>
-
-          {/* Placement Highlights */}
-          <section className="scroll-mt-32" id="placements">
-            <h2 className="text-xl font-bold text-primary border-b border-outline-variant pb-2 mb-6">Placement Highlights</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 bg-gradient-to-br from-[#091426] to-[#1e293b] border border-outline-variant/30 rounded-xl p-6 md:p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] relative overflow-hidden text-white">
-                <div className="relative z-10 flex flex-col h-full justify-between min-h-[160px]">
-                  <div>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-sky-300">Highest Package Offered</span>
-                    <h3 className="text-4xl font-extrabold mt-2 text-white">₹ 2.05 Cr</h3>
-                  </div>
-                  <div className="mt-6 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-emerald-400">trending_up</span>
-                    <span className="text-sm text-slate-300">International &amp; Domestic offers included</span>
-                  </div>
-                </div>
-                <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
-              </div>
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between">
-                <div>
-                  <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Average Package</span>
-                  <h3 className="text-xl font-bold text-secondary mt-2">₹ 18.5 LPA</h3>
-                </div>
-                <div className="mt-6 pt-6 border-t border-outline-variant">
-                  <span className="text-xs text-on-surface-variant block mb-1">Placement Rate</span>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-grow bg-surface-container-high h-2 rounded-full overflow-hidden">
-                      <div className="bg-emerald-500 h-full w-[95%]"></div>
-                    </div>
-                    <span className="text-xs font-bold text-primary">95%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8">
-              <h3 className="text-base font-bold text-primary mb-3">Top Recruiters</h3>
-              <div className="flex flex-wrap gap-2.5">
-                {["Microsoft", "Google", "Goldman Sachs", "Bain & Company", "BCG", "Jane Street", "McKinsey"].map((recruiter) => (
-                  <div key={recruiter} className="bg-surface border border-outline-variant px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
-                    <span className="text-sm font-semibold text-on-surface">{recruiter}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+      {/* Navigation tabs */}
+      <div className="border-b border-outline-variant mb-lg bg-surface-container-lowest top-16 sticky z-30 shadow-sm w-full">
+        <div className="max-w-7xl mx-auto px-6 flex gap-6 overflow-x-auto no-scrollbar">
+          {(["overview", "courses", "reviews", "qa"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-3 text-label-md font-label-md font-bold border-b-2 transition-all cursor-pointer capitalize ${
+                activeTab === tab 
+                  ? "text-secondary border-secondary" 
+                  : "text-on-surface-variant hover:text-primary border-transparent"
+              }`}
+            >
+              {tab === "qa" ? "Q&A Forum" : tab}
+            </button>
+          ))}
         </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="px-6 max-w-7xl mx-auto w-full pb-16 flex-grow">
+        {activeTab === "overview" && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2 space-y-lg">
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
+                <h3 className="text-headline-sm font-headline-sm text-primary mb-md font-bold">About the Institution</h3>
+                <p className="text-body-lg font-body-lg text-on-surface-variant leading-relaxed mb-md">
+                  {college.overview}
+                </p>
+                <div className="grid grid-cols-2 gap-md border-t border-outline-variant/30 pt-md text-body-sm text-on-surface-variant">
+                  <div>
+                    <span className="font-bold text-on-surface block">Established</span>
+                    {college.establishedYear}
+                  </div>
+                  <div>
+                    <span className="font-bold text-on-surface block">Campus Area</span>
+                    {college.campusArea || "N/A"}
+                  </div>
+                  <div>
+                    <span className="font-bold text-on-surface block">Total Students</span>
+                    {college.totalStudents ? college.totalStudents.toLocaleString() : "N/A"}
+                  </div>
+                  <div>
+                    <span className="font-bold text-on-surface block">Total Faculty</span>
+                    {college.totalFaculty ? college.totalFaculty.toLocaleString() : "N/A"}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Side Card: Admission Brochure */}
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm h-fit space-y-md">
+              <h3 className="text-headline-sm font-headline-sm text-primary font-bold">Admissions 2026</h3>
+              <p className="text-body-sm font-body-sm text-on-surface-variant">
+                Admissions for the current academic session are now open. Download the official brochure to learn more about the schedule, eligibility criteria, and fee guidelines.
+              </p>
+              <button
+                onClick={handleDownloadBrochure}
+                className="w-full bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container text-label-md font-label-md font-bold py-3 rounded-lg flex items-center justify-center gap-xs cursor-pointer shadow-sm border border-secondary-fixed-dim/30"
+              >
+                <span className="material-symbols-outlined text-[20px]">download</span> Download Brochure
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "courses" && (
+          <div className="space-y-lg">
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+              <h3 className="text-headline-sm font-headline-sm text-primary mb-md font-bold">Offered Courses</h3>
+              <div className="space-y-md">
+                {college.courses.length === 0 ? (
+                  <p className="text-body-md text-on-surface-variant">No course details available at the moment.</p>
+                ) : (
+                  college.courses.map((course: any) => (
+                    <div key={course.id} className="border border-outline-variant/60 rounded-lg p-md bg-surface-container-low flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+                      <div>
+                        <h4 className="text-body-lg font-body-lg font-bold text-primary">{course.name}</h4>
+                        <div className="flex gap-md mt-base flex-wrap text-label-sm font-label-sm text-on-surface-variant">
+                          <span>Duration: <strong>{course.duration}</strong></span>
+                          {course.eligibility && <span>Eligibility: <strong>{course.eligibility}</strong></span>}
+                          {course.seats && <span>Seats: <strong>{course.seats}</strong></span>}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-start md:items-end">
+                        <span className="text-label-sm font-label-sm text-on-surface-variant">Total Fee</span>
+                        <span className="text-body-lg font-body-lg font-bold text-secondary">
+                          ₹{(course.fees / 100000).toFixed(1)} Lakh
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Placements info */}
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+              <h3 className="text-headline-sm font-headline-sm text-primary mb-md font-bold">Placement Records</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
+                <div className="bg-gradient-to-br from-[#091426] to-[#1e293b] text-white border border-outline-variant/30 rounded-xl p-md flex flex-col justify-between min-h-[120px]">
+                  <span className="text-label-sm font-label-sm text-sky-200 uppercase tracking-wider font-semibold">Highest Package</span>
+                  <span className="text-headline-lg font-headline-lg text-white font-extrabold mt-sm">
+                    {college.highestPackage ? `₹${college.highestPackage} LPA` : "N/A"}
+                  </span>
+                </div>
+                <div className="bg-surface-container-low border border-outline-variant/60 rounded-xl p-md flex flex-col justify-between min-h-[120px]">
+                  <span className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Average Package</span>
+                  <span className="text-headline-lg font-headline-lg text-secondary font-extrabold mt-sm">
+                    {college.averagePackage ? `₹${college.averagePackage} LPA` : "N/A"}
+                  </span>
+                </div>
+                <div className="bg-surface-container-low border border-outline-variant/60 rounded-xl p-md flex flex-col justify-between min-h-[120px]">
+                  <span className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Placement Percentage</span>
+                  <span className="text-headline-lg font-headline-lg text-tertiary-container font-bold mt-sm">
+                    {college.placementPercentage ? `${college.placementPercentage}%` : "N/A"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "reviews" && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Reviews List */}
+            <div className="md:col-span-2 space-y-md">
+              <h3 className="text-headline-sm font-headline-sm text-primary font-bold mb-sm">Student Reviews</h3>
+              {college.reviews.length === 0 ? (
+                <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 text-center text-on-surface-variant">
+                  No reviews yet. Be the first to share your experience!
+                </div>
+              ) : (
+                college.reviews.map((review: any) => (
+                  <div key={review.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md space-y-base shadow-sm">
+                    <div className="flex justify-between items-center flex-wrap gap-xs">
+                      <div>
+                        <h4 className="text-body-lg font-body-lg font-bold text-primary">{review.title}</h4>
+                        <div className="flex items-center gap-xs mt-base text-label-sm font-label-sm text-on-surface-variant">
+                          <span className="bg-secondary/15 text-secondary px-2 py-0.5 rounded font-bold flex items-center gap-0.5">
+                            <span className="material-symbols-outlined text-[12px] icon-fill">star</span> {review.rating}
+                          </span>
+                          <span>by <strong>{review.user.name || "Anonymous Student"}</strong></span>
+                          <span>on {new Date(review.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+                      {review.comment}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Write a Review Form */}
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm h-fit space-y-md">
+              <h3 className="text-headline-sm font-headline-sm text-primary font-bold">Write a Review</h3>
+              <form onSubmit={handleReviewSubmit} className="space-y-md">
+                <div className="flex flex-col gap-base">
+                  <label className="text-label-sm font-label-sm text-on-surface-variant">Rating</label>
+                  <div className="flex items-center gap-xs">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewRating(star)}
+                        className="text-secondary hover:scale-110 transition-transform cursor-pointer"
+                      >
+                        <span className={`material-symbols-outlined text-[28px] ${reviewRating >= star ? "icon-fill text-secondary" : "text-outline"}`}>
+                          star
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-base">
+                  <label className="text-label-sm font-label-sm text-on-surface-variant" htmlFor="review-title">Title</label>
+                  <input
+                    id="review-title"
+                    value={reviewTitle}
+                    onChange={(e) => setReviewTitle(e.target.value)}
+                    placeholder="E.g. Great infrastructure, high fees"
+                    required
+                    className="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-body-sm font-body-sm text-on-surface outline-none focus:border-secondary"
+                  />
+                </div>
+                <div className="flex flex-col gap-base">
+                  <label className="text-label-sm font-label-sm text-on-surface-variant" htmlFor="review-comment">Comment</label>
+                  <textarea
+                    id="review-comment"
+                    rows={4}
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    placeholder="Share your detailed experience..."
+                    required
+                    className="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-body-sm font-body-sm text-on-surface outline-none focus:border-secondary resize-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md font-bold py-3 rounded-lg flex items-center justify-center gap-xs cursor-pointer shadow-sm disabled:opacity-50"
+                >
+                  {isSubmittingReview ? "Posting..." : "Post Review"}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "qa" && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Questions Board */}
+            <div className="md:col-span-2 space-y-md">
+              <h3 className="text-headline-sm font-headline-sm text-primary font-bold mb-sm">Q&A Board</h3>
+              {college.questions.length === 0 ? (
+                <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 text-center text-on-surface-variant">
+                  No questions asked yet. Have a doubt? Ask below!
+                </div>
+              ) : (
+                college.questions.map((q: any) => (
+                  <div key={q.id} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md space-y-md shadow-sm">
+                    <div className="flex flex-col">
+                      <span className="text-body-sm font-body-sm text-on-surface-variant font-semibold">Question</span>
+                      <h4 className="text-body-lg font-body-lg font-bold text-primary mt-base">{q.question}</h4>
+                      <span className="text-label-xs font-label-xs text-on-surface-variant mt-base">
+                        Asked by {q.user.name || "Student"} on {new Date(q.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    {/* Answers list under this question */}
+                    <div className="pl-md border-l-2 border-outline-variant/60 space-y-sm">
+                      {q.answers.length === 0 ? (
+                        <p className="text-body-sm font-body-sm text-on-surface-variant italic">No answers yet.</p>
+                      ) : (
+                        q.answers.map((ans: any) => (
+                          <div key={ans.id} className="bg-surface-container-low/50 rounded-lg p-sm border border-outline-variant/20">
+                            <p className="text-body-sm font-body-sm text-on-surface leading-relaxed">{ans.answer}</p>
+                            <span className="text-label-xs font-label-xs text-on-surface-variant mt-base block">
+                              Answered by {ans.user.name || "Faculty Advisor"} on {new Date(ans.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    {/* Toggle Reply box */}
+                    {activeQuestionIdForAnswer === q.id ? (
+                      <form onSubmit={(e) => handleAnswerSubmit(e, q.id)} className="space-y-base pt-base">
+                        <textarea
+                          rows={2}
+                          value={answerText}
+                          onChange={(e) => setAnswerText(e.target.value)}
+                          placeholder="Write your answer..."
+                          required
+                          className="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-body-sm font-body-sm text-on-surface outline-none focus:border-secondary resize-none"
+                        />
+                        <div className="flex gap-xs">
+                          <button
+                            type="submit"
+                            disabled={isSubmittingAnswer}
+                            className="bg-secondary text-on-secondary px-4 py-2 rounded-lg text-label-sm font-label-sm font-bold hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                          >
+                            Submit Answer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveQuestionIdForAnswer(null);
+                              setAnswerText("");
+                            }}
+                            className="text-on-surface-variant hover:text-primary px-3 py-2 text-label-sm font-label-sm"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setActiveQuestionIdForAnswer(q.id);
+                          setAnswerText("");
+                        }}
+                        className="text-label-sm font-label-sm text-secondary hover:underline flex items-center gap-xs cursor-pointer font-bold"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">reply</span> Reply to this question
+                      </button>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Ask a Question Form */}
+            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm h-fit space-y-md">
+              <h3 className="text-headline-sm font-headline-sm text-primary font-bold">Ask a Question</h3>
+              <p className="text-body-sm font-body-sm text-on-surface-variant">
+                Got questions regarding cutoffs, faculty quality, hostel rules, or placement procedures? Ask the student community.
+              </p>
+              <form onSubmit={handleQuestionSubmit} className="space-y-md">
+                <textarea
+                  rows={4}
+                  value={questionText}
+                  onChange={(e) => setQuestionText(e.target.value)}
+                  placeholder="E.g. What is the cutoff for CSE in general category?"
+                  required
+                  className="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-body-sm font-body-sm text-on-surface outline-none focus:border-secondary resize-none"
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmittingQuestion}
+                  className="w-full bg-primary hover:opacity-90 text-on-primary text-label-md font-label-md font-bold py-3 rounded-lg flex items-center justify-center gap-xs cursor-pointer shadow-sm disabled:opacity-50"
+                >
+                  {isSubmittingQuestion ? "Posting..." : "Ask Question"}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
@@ -507,19 +696,22 @@ export default function CollegeDetailsPage({ params }: PageProps) {
             <p className="text-body-sm font-body-sm text-on-surface-variant mt-2">© 2026 EduVault Discovery. All rights reserved.</p>
           </div>
           <div className="flex flex-col gap-2">
-            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">About Us</Link>
-            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Terms of Service</Link>
+            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="/colleges">About Us</Link>
+            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Terms of Service</Link>
           </div>
           <div className="flex flex-col gap-2">
-            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Privacy Policy</Link>
-            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Contact Support</Link>
+            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Privacy Policy</Link>
+            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Contact Support</Link>
           </div>
           <div className="flex flex-col gap-2">
-            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Trust Badges</Link>
-            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="/colleges">Newsletter</Link>
+            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Trust Badges</Link>
+            <Link className="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Newsletter</Link>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
+
+
