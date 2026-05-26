@@ -3,6 +3,7 @@
 import React, { useState, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -61,6 +62,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
                   type="text"
                 />
               </form>
+              <ThemeToggle />
               <button onClick={() => router.push("/login?tab=login")} className="text-label-md font-label-md text-secondary hover:bg-surface-container-low px-4 py-2 rounded-lg transition-colors cursor-pointer">
                 Sign In
               </button>
@@ -328,6 +330,7 @@ export default function CollegeDetailsPage({ params }: PageProps) {
                 type="text"
               />
             </form>
+            <ThemeToggle />
             <button onClick={() => router.push("/login?tab=login")} className="text-label-md font-label-md text-secondary hover:bg-surface-container-low px-4 py-2 rounded-lg transition-colors cursor-pointer">
               Sign In
             </button>

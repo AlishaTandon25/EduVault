@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Toaster, toast } from "sonner";
+import { ThemeProvider } from "next-themes";
 
 export interface College {
   slug: string;
@@ -94,17 +95,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <CompareContext.Provider
-      value={{
-        comparedColleges,
-        addToCompare,
-        removeFromCompare,
-        clearCompare,
-        isCompared,
-      }}
-    >
-      {children}
-      <Toaster position="bottom-right" richColors />
-    </CompareContext.Provider>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <CompareContext.Provider
+        value={{
+          comparedColleges,
+          addToCompare,
+          removeFromCompare,
+          clearCompare,
+          isCompared,
+        }}
+      >
+        {children}
+        <Toaster position="bottom-right" richColors />
+      </CompareContext.Provider>
+    </ThemeProvider>
   );
 }

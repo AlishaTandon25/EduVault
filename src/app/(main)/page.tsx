@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -37,6 +38,7 @@ export default function LandingPage() {
             </ul>
           </div>
           <div className="flex items-center gap-sm">
+            <ThemeToggle />
             <button onClick={() => router.push("/login?tab=login")} className="hidden md:block text-label-md font-label-md text-on-surface-variant hover:text-primary px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
               Sign In
             </button>
