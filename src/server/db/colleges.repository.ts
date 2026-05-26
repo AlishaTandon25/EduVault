@@ -99,30 +99,46 @@ export const CollegesRepository = {
   },
 
   async findBySlug(slug: string) {
-    return prisma.college.findUnique({
+    const college = await prisma.college.findUnique({
       where: { slug },
       include: {
         courses: true,
-        reviews: {
-          include: {
-            user: { select: { id: true, name: true, image: true } },
-          },
-          orderBy: { createdAt: "desc" },
-        },
-        questions: {
-          include: {
-            user: { select: { id: true, name: true } },
-            answers: {
-              include: {
-                user: { select: { id: true, name: true } },
-              },
-              orderBy: { createdAt: "asc" },
-            },
-          },
-          orderBy: { createdAt: "desc" },
-        },
       },
     });
+
+    if (!college) return null;
+
+    const [reviews, questions] = await Promise.all([
+      prisma.review.findMany({
+        where: { collegeId: college.id },
+        include: {
+          user: { select: { id: true, name: true, image: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+      prisma.question.findMany({
+        where: { collegeId: college.id },
+        include: {
+          user: { select: { id: true, name: true } },
+          answers: {
+            include: {
+              user: { select: { id: true, name: true } },
+            },
+            orderBy: { createdAt: "asc" },
+            take: 10,
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 15,
+      }),
+    ]);
+
+    return {
+      ...college,
+      reviews,
+      questions,
+    };
   },
 
   async getSearchSuggestions(query: string) {

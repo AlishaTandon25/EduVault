@@ -251,9 +251,6 @@ export default function CollegeDetailsPage({ params }: PageProps) {
             <ThemeToggle />
             {status === "authenticated" ? (
               <div className="flex items-center gap-xs">
-                <Link href="/dashboard" className="text-label-md font-label-md bg-secondary text-on-secondary px-4 py-2 rounded-lg hover:opacity-90 transition-all font-bold">
-                  Dashboard
-                </Link>
                 <button 
                   onClick={() => {
                     signOut({ redirect: false });

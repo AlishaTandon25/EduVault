@@ -32,12 +32,12 @@ export async function GET(request: Request, { params }: RouteParams) {
 
     if (session?.user?.id) {
       isSaved = await UsersRepository.isSaved(session.user.id, college.id);
-      await UsersRepository.logActivity(
+      void UsersRepository.logActivity(
         session.user.id,
         "VIEW_COLLEGE",
         college.slug,
         college.name
-      );
+      ).catch(() => null);
     }
 
     return NextResponse.json(

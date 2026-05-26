@@ -178,9 +178,6 @@ export default function DiscoverPage() {
             <ThemeToggle />
             {status === "authenticated" ? (
               <div className="flex items-center gap-xs">
-                <Link href="/dashboard" className="text-label-md font-label-md bg-secondary text-on-secondary px-4 py-2 rounded-lg hover:opacity-90 transition-all font-bold">
-                  Dashboard
-                </Link>
                 <button 
                   onClick={() => {
                     signOut({ redirect: false });
@@ -402,7 +399,7 @@ export default function DiscoverPage() {
                 >
                   <div className="h-40 bg-surface-container-highest relative overflow-hidden">
                     <img
-                      src={getCollegeImageUrl(college.slug, college.imageUrl, college.name, college.stream, college.city)}
+                      src={getCollegeImageUrl(college.slug, college.imageUrl, college.name, college.stream, college.city, true)}
                       alt={college.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={(e) => {
