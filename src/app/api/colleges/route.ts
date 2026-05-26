@@ -43,6 +43,19 @@ export async function GET(request: Request) {
     });
   } catch (error: any) {
     console.error("Colleges GET error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    const debug = process.env.DEBUG_API_ERRORS === "true";
+    return NextResponse.json(
+      {
+        error: "Internal Server Error",
+        ...(debug
+          ? {
+              details: error?.message || "Unknown error",
+              code: error?.code || null,
+              name: error?.name || null,
+            }
+          : {}),
+      },
+      { status: 500 }
+    );
   }
 }
