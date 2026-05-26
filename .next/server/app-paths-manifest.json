@@ -1,7 +1,0 @@
-{
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(main)/colleges/page": "app/(main)/colleges/page.js",
-  "/(main)/page": "app/(main)/page.js",
-  "/(main)/compare/page": "app/(main)/compare/page.js",
-  "/(main)/colleges/[slug]/page": "app/(main)/colleges/[slug]/page.js"
-}
